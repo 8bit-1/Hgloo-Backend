@@ -1,0 +1,26 @@
+{
+  "name": "hgloo-backend",
+  "version": "1.0.0",
+  "description": "Backend para web app Hgloo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8bit-1/Hgloo-Backend.git"
+  },
+  "author": "PDI-Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/8bit-1/Hgloo-Backend/issues"
+  },
+  "homepage": "https://github.com/8bit-1/Hgloo-Backend#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.7"
+  }
+}
