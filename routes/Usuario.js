@@ -1,19 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const mysqlConnection = require('../database');
+//const mysqlConnection = require('../database');
+const usuarioS = require('../services/Usuario')
 
-
-//Ejemplo de consulta a la base
-router.get('/personas', (req,res) => {  
-    mysqlConnection.query('SELECT * FROM PERSONA',(err,rows,fileds)=>{
-        if(!err){
-            res.json(rows);
-        }else{
-            console.log(err);
-        }
-    })
-})
+//POST
+router.post('/create', async function (req,res, next){  
+    try {
+        res.json( await usuarioS.create(req.body) );
+    } catch (error) {
+        console.error(`Error while creating programming language`, error.message);
+        next(error);
+    }
+});
 
 
 

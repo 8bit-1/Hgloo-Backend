@@ -17,10 +17,10 @@ async function create(Usuario){
         ]
     );
 
-    let message = 'Error creating programming language';
+    let message = 'Error creating User';
 
     if (result.affectedRows) {
-        message = 'Programming Languge created sucessfully';
+        message = 'User created sucessfully';
     }
 
     return message;
