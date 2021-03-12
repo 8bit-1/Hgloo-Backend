@@ -3,8 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 //Rutas
-const inicioRouter = require('./routes/Inicio')
-const usuarioRouter = require('./routes/User')
+const inicioRouter = require('./routes/Inicio');
+const usuarioRouter = require('./routes/User');
+const signUpRouter = require('./routes/signUp');
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 //Routes
 app.use('/', inicioRouter);
 app.use('/user', usuarioRouter);
-
+app.use('/sign-up', signUpRouter);
 
 //Starting Server
 
