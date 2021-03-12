@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //Routes
 app.use('/', inicioRouter);
-app.use('/Usuario', )
+app.use('/Usuario', usuarioRouter);
 
 //Starting Server
 
