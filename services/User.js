@@ -2,18 +2,18 @@ const db = require('./db');
 
 async function create(Usuario){
     const result = await db.query(
-        `registraUsuario(?,?,?,?,?,?,?,?,?,?,?)`,
+        `call registraUsuario(?,?,?,?,?,?,?,?,?,?)`,
         [
             Usuario.id,
-            Usuario.nombre,
-            Usuario.apellido,
-            Usuario.correo,
-            Usuario.telefono, 
+            Usuario.name,
+            Usuario.lastname,
+            Usuario.email,
+            Usuario.phone, 
             Usuario.urlFoto,
-            Usuario.idCiudad,
-            Usuario.idDepartamento,
-            Usuario.idPais,
-            Usuario.idGenero
+            Usuario.city,
+            Usuario.province,
+            Usuario.country,
+            Usuario.genre
         ]
     );
 

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 //Rutas
 const inicioRouter = require('./routes/Inicio')
-const usuarioRouter = require('./routes/Usuario')
+const usuarioRouter = require('./routes/User')
 
 const app = express();
 
@@ -19,7 +19,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //Routes
 app.use('/', inicioRouter);
-app.use('/Usuario', usuarioRouter);
+app.use('/user', usuarioRouter);
+
 
 //Starting Server
 
