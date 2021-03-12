@@ -1,7 +1,7 @@
 const db = require('./db');
 
 async function registrar(Usuario){
-    const result = await db.query(
+    const result = await db.queryP(
         `call registraUsuario(?,?,?,?,?,?,?,?,?,?)`,
         [
             Usuario.id,
