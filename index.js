@@ -8,7 +8,6 @@ const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
 const categoryRouter = require('./routes/categories');
-
 const app = express();
 
 //Settings
