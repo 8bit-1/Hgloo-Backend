@@ -14,9 +14,9 @@ router.post('/register-product', async function (req,res, next){
 });
 
 //GET
-router.get('/product', async function(req, res, next){
+router.get('/product/:idUser', async function(req, res, next){
     try {
-        res.json( await producT.getProduct());
+        res.json( await producT.getProduct(req.params.idUser));
     } catch (error) {
         console.error("Error while getting countries: ",error)
     }
