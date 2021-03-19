@@ -1,26 +1,33 @@
 const db = require('./db');
 
-async function create(Usuario){
-    const result = await db.query(
-        `call registraUsuario(?,?,?,?,?,?,?,?,?,?)`,
+async function update(Usuario){
+    const result = await db.queryP(
+        `update usuario set nombreUsuario=?,
+         apellidoUsuario=?,
+         telefono=?,
+         idCiudad=?,
+         idDepartamento=?,
+         idPais=?,
+         idGenero=?,
+         idMonedaUsuario=?
+         where idUsuario=?`,
         [
-            Usuario.id,
             Usuario.name,
             Usuario.lastname,
-            Usuario.email,
             Usuario.phone, 
-            Usuario.urlFoto,
             Usuario.city,
             Usuario.province,
             Usuario.country,
-            Usuario.genre
+            Usuario.genre,
+            Usuario.coin,
+            Usuario.id
         ]
     );
 
-    let message = 'Error creating User';
+    let message = 'Error updating User';
 
     if (result.affectedRows) {
-        message = 'User created sucessfully';
+        message = 'User updated sucessfully';
     }
 
     return message;
@@ -28,5 +35,5 @@ async function create(Usuario){
 
 
 module.exports={
-    create
+    update
 }
