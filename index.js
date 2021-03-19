@@ -7,7 +7,12 @@ const inicioRouter = require('./routes/Inicio');
 const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
+<<<<<<< Updated upstream
 
+=======
+const categoryRouter = require('./routes/categories');
+const productRouter = require('./routes/product');
+>>>>>>> Stashed changes
 const app = express();
 
 //Settings
@@ -23,7 +28,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', inicioRouter);
 app.use('/user', usuarioRouter);
 app.use('/sign-up', signUpRouter);
+<<<<<<< Updated upstream
 app.use('/location', locationRouter)
+=======
+app.use('/location', locationRouter);
+app.use('/categories', categoryRouter);
+app.use('/product', productRouter);
+>>>>>>> Stashed changes
 //Starting Server
 
 app.listen(app.get('port'), () => {
