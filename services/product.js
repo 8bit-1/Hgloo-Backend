@@ -25,20 +25,19 @@ async function registerProduct(Product){
     return message;
 }
 
-async function getProduct(){
-    const result = await db.query(`SELECT producto.idProducto, producto.Producto,
-    ciudad.nombreCiudad, pais.pais, condicion.condicion,
+async function getProduct(idUser){
+    const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
+    ciudad.nombreCiudad, pais.pais,condicion.condicion,
     producto.costo FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+    AND producto.idPaisProducto=ciudad.idPais 
     INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
     INNER JOIN pais ON producto.idPaisProducto=pais.idPais
     INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
-    WHERE producto.idProducto=producto.idProducto AND
-          producto.idCiudadProducto=ciudad.idCiudad AND
-          producto.idDepartamentoProducto=ciudad.idDepartamento  AND
-          producto.idPaisProducto=ciudad.idPais AND 
-          producto.idCondicion=condicion.idCondicion
-          AND producto.idEstadoProducto<>2`);
+    WHERE  producto.idEstadoProducto<>2
+    AND producto.usuario=?
+    ORDER BY producto.fechaPublicacion DESC;`,[idUser]);
     if (!result) { return [];}
     return result;
 }
