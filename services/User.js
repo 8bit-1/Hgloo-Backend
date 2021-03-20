@@ -1,17 +1,10 @@
 const db = require('./db');
 
-async function update(Usuario){
+async function update(Usuario,idUser){
     const result = await db.queryP(
-        `update usuario set nombreUsuario=?,
-         apellidoUsuario=?,
-         telefono=?,
-         idCiudad=?,
-         idDepartamento=?,
-         idPais=?,
-         idGenero=?,
-         idMonedaUsuario=?
-         where idUsuario=?`,
+        `call modificarUsuario(?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
+            idUser,
             Usuario.name,
             Usuario.lastname,
             Usuario.phone, 
@@ -20,7 +13,9 @@ async function update(Usuario){
             Usuario.country,
             Usuario.genre,
             Usuario.coin,
-            Usuario.id
+            Usuario.urlWhatsapp,
+            Usuario.urlFacebook,
+            Usuario.urlInstagram,
         ]
     );
 
