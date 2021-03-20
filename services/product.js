@@ -1,11 +1,11 @@
 const db = require('./db');
 
-async function registerProduct(Product){
+async function registerProduct(Product,idUser){
     const result = await db.queryP(
         `call registrarProducto(?,?,?,?,?,?,?,?,?,?)`,
         [
             Product.product,
-            Product.users,
+            idUser,
             Product.description, 
             Product.price,  
             Product.coin, 
