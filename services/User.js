@@ -28,7 +28,15 @@ async function update(Usuario,idUser){
     return message;
 }
 
+async function getQualificationUser(idUser){
+    const result = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Qualification FROM calificacion where calificado=?`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
+
 
 module.exports={
-    update
+    update,
+    getQualificationUser
 }
