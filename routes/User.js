@@ -14,6 +14,16 @@ router.post('/update/:idUser', async function (req,res, next){
     }
 });
 
+//GET
+router.get('/qualification/:idUser', async function(req, res, next){
+    try {
+        res.json( await usuarioS.getQualificationUser(req.params.idUser));
+    } catch (error) {
+        console.error("Error getting grade: ",error)
+    }
+} );
+
+
 
 
 module.exports = router;
