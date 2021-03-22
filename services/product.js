@@ -42,7 +42,16 @@ async function getProduct(idUser){
     return result;
 }
 
+async function getCountProduct(idUser){
+    const result = await db.queryP(`SELECT COUNT(*) as Products FROM producto where producto.usuario=? AND
+    idEstadoProducto<>2`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
+
 module.exports={
     registerProduct,
-    getProduct
+    getProduct,
+    getCountProduct
 }
