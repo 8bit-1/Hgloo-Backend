@@ -12,4 +12,18 @@ router.get('/category', async function(req, res, next){
     }
 } );
 
+
+
+//POST
+router.post('/delete-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.deleteCategory(req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while deleting category`, error.message);
+        next(error);
+    }
+});
+
+
+
 module.exports=router;
