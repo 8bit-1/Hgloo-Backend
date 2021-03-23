@@ -1,30 +1,5 @@
 const db = require('./db');
 
-async function registerProduct(Product,idUser){
-    const result = await db.queryP(
-        `call registrarProducto(?,?,?,?,?,?,?,?,?,?)`,
-        [
-            Product.product,
-            idUser,
-            Product.description, 
-            Product.price,  
-            Product.coin, 
-            Product.condition, 
-            Product.city, 
-            Product.province, 
-            Product.country,
-            Product.category
-        ]
-    );
-
-    let message = 'Error registering Product';
-
-    if (result.affectedRows) {
-        message = 'Product registered sucessfully';
-    }
-    return message;
-}
-
 async function getProduct(idUser){
     const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
     ciudad.nombreCiudad, pais.pais,condicion.condicion,
@@ -49,9 +24,42 @@ async function getCountProduct(idUser){
     return result;
 }
 
+async function registerProduct(Producto,idUser){
+    const result = await db.queryP(
+        `call registraProducto(?,?,?,?,?,?,?,?,?,?)`,
+        [
+            Producto.product,
+            idUser,
+            Producto.description,
+            Producto.price,
+            Producto.coin, 
+            Producto.condition,
+            Producto.city,
+            Producto.province,
+            Producto.country,
+            Producto.category
+        ]
+    );
+    Producto.images.forEach(element => {
+        const result =  db.queryP(
+            `INSERT INTO imagenesurl(urlImagenProducto,idProducto) values (?,(SELECT MAX(idProducto) FROM producto))
+            `,
+            [   
+                element
+            ]
+        );  
+        
+    });
+    let message = 'Error creating Product';
+
+    if (result.affectedRows) {
+        message = 'Product created sucessfully';
+    }
+    return message;
+}
 
 module.exports={
-    registerProduct,
     getProduct,
-    getCountProduct
+    getCountProduct,
+    registerProduct
 }
