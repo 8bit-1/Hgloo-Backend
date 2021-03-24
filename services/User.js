@@ -86,10 +86,57 @@ async function addSocialMedia(Redes,idUser){
     return message;
 }
 
+async function subscribedCategoryUser(idUser){
+    const result = await db.queryP(`SELECT categoria.idCategoria ,categoria.nombreCategoria as Categoria FROM usuario
+                                    INNER JOIN categoriausuario
+                                    on usuario.idUsuario=categoriausuario.idUsuario
+                                    INNER JOIN categoria  
+                                    ON categoriausuario.idCategoria=categoria.idCategoria where usuario.idUsuario=?
+                                    AND categoria.idEstadoCategoria=1;`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
+
+async function subsCategory(Categories,idUser){
+    const result = await db.queryP(
+        `INSERT INTO categoriausuario VALUES(?,?);`,[Categories.subsCategory,idUser]
+    );
+
+    let message = 'Error suscribed category';
+
+    if (result.affectedRows) {
+        message = 'add subscription to category sucessfully';
+    }
+
+    return message;
+}
+
+
+async function unsubsCategory(Categories,idUser){
+    const result = await db.queryP(
+        `DELETE FROM categoriausuario where idCategoria=? and idUsuario=?;`,[Categories.subsCategory,idUser]
+    );
+
+    let message = 'Error unsuscribed category';
+
+    if (result.affectedRows) {
+        message = 'unsubscription to category sucessfully';
+    }
+
+    return message;
+}
+
+
+
+
 
 module.exports={
     update,
     getQualificationUser,
     getUser,
-    addSocialMedia
+    addSocialMedia,
+    subscribedCategoryUser,
+    subsCategory,
+    unsubsCategory
 }
