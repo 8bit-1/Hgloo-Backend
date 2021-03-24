@@ -42,5 +42,34 @@ router.post('/addSocialMedia/:idUser', async function (req,res, next){
     }
 });
 
+//GET
+router.get('/subscribed-category/:idUser', async function(req, res, next){
+    try {
+        res.json( await usuarioS.subscribedCategoryUser(req.params.idUser));
+    } catch (error) {
+        console.error("Error getting subscribed category of user: ",error)
+    }
+} );
+
+
+//POST
+router.post('/add-subsCategory/:idUser', async function (req,res, next){  
+    try {
+        res.json( await usuarioS.subsCategory(req.body,req.params.idUser) );
+    } catch (error) {
+        console.error(`Error while suscribed category`, error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/un-subsCategory/:idUser', async function (req,res, next){  
+    try {
+        res.json( await usuarioS.unsubsCategory(req.body,req.params.idUser) );
+    } catch (error) {
+        console.error(`Error while un suscribed category`, error.message);
+        next(error);
+    }
+});
 
 module.exports = router;
