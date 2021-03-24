@@ -7,7 +7,7 @@ const inicioRouter = require('./routes/Inicio');
 const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
-
+const commentaryRouter = require('./routes/Commentary');
 const app = express();
 
 //Settings
@@ -23,7 +23,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', inicioRouter);
 app.use('/user', usuarioRouter);
 app.use('/sign-up', signUpRouter);
-app.use('/location', locationRouter)
+app.use('/location', locationRouter);
+app.use('/commentary', commentaryRouter)
 //Starting Server
 
 app.listen(app.get('port'), () => {
