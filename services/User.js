@@ -42,8 +42,8 @@ async function getUser(idUser){
     urlFotoPerfil, 
     pa.Pais, 
     dep.Departamento, 
-    ciu.nombreCiudad,
-    ge.Genero FROM HglooApp.usuario us
+    ciu.nombreCiudad, 
+    ge.Genero, CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Qualification FROM HglooApp.usuario us
     INNER JOIN HglooApp.pais pa
     ON us.idPais = pa.idPais
     INNER JOIN HglooApp.departamento dep
@@ -86,10 +86,29 @@ async function addSocialMedia(Redes,idUser){
     return message;
 }
 
+async function getInfo(idUser){
+    const result = await db.queryP( `SELECT CONCAT(nombreUsuario, " ", 
+    apellidoUsuario) AS nombre, 
+    correo, 
+    COUNT(producto.idProducto) as Products, CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Qualification  FROM HglooApp.usuario 
+    INNER JOIN HglooApp.producto 
+    ON producto.usuario = usuario.idUsuario
+    INNER JOIN HglooApp.calificacion 	 
+    ON calificacion.Calificado=usuario.idUsuario
+    WHERE usuario.idUsuario = ?
+	AND producto.idEstadoProducto!=2 
+    GROUP BY nombreUsuario, 
+    apellidoUsuario, 
+    correo,  producto.idProducto;`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
 
 module.exports={
     update,
     getQualificationUser,
     getUser,
-    addSocialMedia
+    addSocialMedia,
+    getInfo
 }
