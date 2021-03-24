@@ -42,5 +42,14 @@ router.post('/addSocialMedia/:idUser', async function (req,res, next){
     }
 });
 
+//GET
+router.get('/showInfoUser/:idUser', async function(req, res, next){
+    try {
+        res.json( await usuarioS.getInfo(req.params.idUser));
+    } catch (error) {
+        console.error("Error getting grade: ",error)
+    }
+} );
+
 
 module.exports = router;
