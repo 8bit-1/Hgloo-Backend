@@ -34,9 +34,62 @@ async function getQualificationUser(idUser){
     return result;
 }
 
+async function getUser(idUser){
+    const result = await db.queryP(`SELECT nombreUsuario, 
+    apellidoUsuario, 
+    correo, 
+    telefono, 
+    urlFotoPerfil, 
+    pa.Pais, 
+    dep.Departamento, 
+    ciu.nombreCiudad,
+    ge.Genero FROM HglooApp.usuario us
+    INNER JOIN HglooApp.pais pa
+    ON us.idPais = pa.idPais
+    INNER JOIN HglooApp.departamento dep
+    ON dep.idDepartamento = us.idDepartamento
+    INNER JOIN HglooApp.ciudad ciu 
+    ON ciu.idCiudad = us.idCiudad
+    INNER JOIN HglooApp.genero ge
+    ON ge.idGenero = us.idGenero 
+    WHERE us.idUsuario = ?
+    GROUP BY nombreUsuario, 
+    apellidoUsuario, 
+    correo, 
+    telefono, 
+    urlFotoPerfil, 
+    pa.Pais, 
+    dep.Departamento, 
+    us.idCiudad,
+    ge.Genero;`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
+async function addSocialMedia(Redes,idUser){
+    const result = await db.queryP(
+        `call insertarRedesSociales(?,?,?,?)`,
+        [
+            idUser,
+            Redes.urlWhatsapp,
+            Redes.urlFacebook,
+            Redes.urlInstagram
+        ]
+    );
+
+    let message = 'Error inserted SocialMedia';
+
+    if (result.affectedRows) {
+        message = 'Social media add sucessfully';
+    }
+
+    return message;
+}
 
 
 module.exports={
     update,
-    getQualificationUser
+    getQualificationUser,
+    getUser,
+    addSocialMedia
 }
