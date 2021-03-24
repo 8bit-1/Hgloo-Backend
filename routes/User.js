@@ -23,7 +23,24 @@ router.get('/qualification/:idUser', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/showUser/:idUser', async function(req, res, next){
+    try {
+        res.json( await usuarioS.getUser(req.params.idUser));
+    } catch (error) {
+        console.error("Error getting grade: ",error)
+    }
+} );
 
+//POST
+router.post('/addSocialMedia/:idUser', async function (req,res, next){  
+    try {
+        res.json( await usuarioS.addSocialMedia(req.body,req.params.idUser) );
+    } catch (error) {
+        console.error(`Error while creating user`, error.message);
+        next(error);
+    }
+});
 
 
 module.exports = router;
