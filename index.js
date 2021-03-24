@@ -8,6 +8,8 @@ const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
 const categoryRouter = require('./routes/categories');
+const profileRouter = require('./routes/Profile');
+
 const app = express();
 
 //Settings
@@ -25,6 +27,8 @@ app.use('/user', usuarioRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/location', locationRouter);
 app.use('/categories', categoryRouter);
+app.use('/profile', profileRouter);
+
 //Starting Server
 
 app.listen(app.get('port'), () => {
