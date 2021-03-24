@@ -78,7 +78,11 @@ router.get('/show-comments/:idUser/:init/:fin', async function(req, res, next){
     try {
         res.json( await usuarioS.getShowComents(req.params.idUser,req.params.init,req.params.fin));
     } catch (error) {
-        console.error("Error getting show comments of user: ",error)
+        console.error("Error getting show comments of user: ",error) 
+    }
+ });
+
+
 
 router.get('/showInfoUser/:idUser', async function(req, res, next){
     try {
@@ -87,6 +91,6 @@ router.get('/showInfoUser/:idUser', async function(req, res, next){
         console.error("Error getting grade: ",error)
     }
 } );
-
+  
 
 module.exports = router;
