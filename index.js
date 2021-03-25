@@ -7,9 +7,11 @@ const inicioRouter = require('./routes/Inicio');
 const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
+
 const productRouter = require('./routes/product');
 
 const categoryRouter = require('./routes/categories');
+const commentaryRouter = require('./routes/Commentary');
 const app = express();
 
 //Settings
@@ -30,6 +32,7 @@ app.use('/location', locationRouter);
 app.use('/product', productRouter);
 
 
+app.use('/commentary', commentaryRouter)
 //Starting Server
 
 app.listen(app.get('port'), () => {
