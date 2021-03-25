@@ -13,5 +13,15 @@ router.post('/commentUser/:commentator/:commented', async function (req,res, nex
     }
 });
 
+//POST
+router.post('/commentProduct/:commentator/:idProduct', async function (req,res, next){  
+    try {
+        res.json( await commenT.commentProduct(req.body,req.params.commentator,req.params.idProduct) );
+    } catch (error) {
+        console.error(`Error while creating commentary`, error.message);
+        next(error);
+    }
+});
+
 
 module.exports = router;
