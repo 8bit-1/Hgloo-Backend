@@ -169,7 +169,7 @@ async function updateProfilePicture(Usuario,idUser){
         ]
     );
 
-    let message = 'Error updating  Profile Picture';
+    let message = 'Error updating Profile Picture';
 
     if (result.affectedRows) {
         message = 'User Profile Picture sucessfully';
