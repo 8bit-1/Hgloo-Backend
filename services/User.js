@@ -15,7 +15,7 @@ async function update(Usuario,idUser){
             Usuario.coin,
             Usuario.urlWhatsapp,
             Usuario.urlFacebook,
-            Usuario.urlInstagram,
+            Usuario.urlInstagram
         ]
     );
 
@@ -159,7 +159,24 @@ async function getShowComents(idUser,init,fin){
     return result;
 }
 
+async function updateProfilePicture(Usuario,idUser){
+    const result = await db.queryP(
+        `update usuario set urlFotoPerfil=? where idUsuario=?`,
+        [
+            Usuario.urlPhoto,
+            idUser
+            
+        ]
+    );
 
+    let message = 'Error updating  Profile Picture';
+
+    if (result.affectedRows) {
+        message = 'User Profile Picture sucessfully';
+    }
+
+    return message;
+}
 
 module.exports={
     update,
@@ -170,6 +187,6 @@ module.exports={
     subsCategory,
     unsubsCategory,
     getShowComents,
-    getInfo
-
+    getInfo,
+    updateProfilePicture
 }
