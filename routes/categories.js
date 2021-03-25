@@ -12,4 +12,38 @@ router.get('/category', async function(req, res, next){
     }
 } );
 
+
+
+//POST
+router.post('/delete-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.deleteCategory(req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while deleting category`, error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/create-category', async function (req,res, next){  
+    try {
+        res.json( await categorY.createCategory(req.body) );
+    } catch (error) {
+        console.error(`Error while creating category`, error.message);
+        next(error);
+    }
+});
+
+
+//POST
+router.post('/update-validity', async function (req,res, next){  
+    try {
+        res.json( await categorY.updateValidity(req.body) );
+    } catch (error) {
+        console.error(`Error while updateing validity`, error.message);
+        next(error);
+    }
+});
+
+
 module.exports=router;
