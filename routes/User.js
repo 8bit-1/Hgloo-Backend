@@ -92,5 +92,14 @@ router.get('/showInfoUser/:idUser', async function(req, res, next){
     }
 } );
   
+//POST
+router.post('/updateProfilePicture/:idUser', async function (req,res, next){  
+    try {
+        res.json( await usuarioS.updateProfilePicture(req.body,req.params.idUser) );
+    } catch (error) {
+        console.error(`Error while creating user`, error.message);
+        next(error);
+    }
+});
 
 module.exports = router;
