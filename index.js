@@ -9,6 +9,7 @@ const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
 const productRouter = require('./routes/product');
 
+const categoryRouter = require('./routes/categories');
 const app = express();
 
 //Settings
