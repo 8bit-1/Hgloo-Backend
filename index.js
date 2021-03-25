@@ -7,6 +7,7 @@ const inicioRouter = require('./routes/Inicio');
 const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
+const complaintRouter = require('./routes/Complaint');
 
 const productRouter = require('./routes/product');
 
@@ -30,9 +31,9 @@ app.use('/sign-up', signUpRouter);
 app.use('/location', locationRouter);
 app.use('/location', locationRouter);
 app.use('/product', productRouter);
-
-
 app.use('/commentary', commentaryRouter)
+app.use('/complaint', complaintRouter);
+
 //Starting Server
 
 app.listen(app.get('port'), () => {
