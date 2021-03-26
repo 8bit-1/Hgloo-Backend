@@ -12,6 +12,7 @@ const productRouter = require('./routes/product');
 const categoryRouter = require('./routes/categories');
 const commentaryRouter = require('./routes/Commentary');
 const profileRouter = require('./routes/Profile');
+const reportsRouter = require('./routes/Reports');
 
 
 const app = express();
@@ -38,7 +39,7 @@ app.use('/complaint', complaintRouter);
 
 app.use('/categories', categoryRouter);
 app.use('/profile', profileRouter);
-
+app.use('/reports', reportsRouter);
 
 //Starting Server
 
