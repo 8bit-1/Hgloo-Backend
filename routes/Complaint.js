@@ -14,4 +14,14 @@ router.post('/add-complaint/:whistleblower/:denounced', async function (req,res,
 });
 
 
+//POST
+router.post('/report-product/:whistleblower/:idProduct', async function (req,res, next){  
+    try {
+        res.json( await complainT.reportProduct(req.body,req.params.whistleblower,req.params.idProduct) );
+    } catch (error) {
+        console.error(`Error while reporting product`, error.message);
+        next(error);
+    }
+});
+
 module.exports = router;

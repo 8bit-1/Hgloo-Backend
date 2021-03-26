@@ -19,6 +19,33 @@ async function addComplaint(complaint,whistleblower,denounced){
 }
 
 
+//POST
+            
+async function reportProduct(report,whistleblower,idProduct,idReport){
+    const result = await db.queryP(
+        `insert into denuncia(descripcionDenuncia,idDenunciante,idProductoDenunciado,idDenunciado,idReporte) 
+         VALUES(?,?,?,(SELECT usuario FROM producto where idProducto=?),?)`,
+        [
+            report.description,
+            whistleblower,
+            idProduct,
+            idProduct,
+            report.idReport
+        ]
+    );
+
+    let message = 'Error when reporting the product';
+
+    if (result.affectedRows) {
+        message = 'Product successfully reported';
+    }
+    return message;
+}
+
+
+
+
 module.exports={
-    addComplaint
+    addComplaint,
+    reportProduct
 }
