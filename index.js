@@ -8,11 +8,12 @@ const usuarioRouter = require('./routes/User');
 const signUpRouter = require('./routes/signUp');
 const locationRouter = require('./routes/location');
 const complaintRouter = require('./routes/Complaint');
-
 const productRouter = require('./routes/product');
-
 const categoryRouter = require('./routes/categories');
 const commentaryRouter = require('./routes/Commentary');
+const profileRouter = require('./routes/Profile');
+
+
 const app = express();
 
 //Settings
@@ -29,10 +30,15 @@ app.use('/', inicioRouter);
 app.use('/user', usuarioRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/location', locationRouter);
+
 app.use('/location', locationRouter);
 app.use('/product', productRouter);
 app.use('/commentary', commentaryRouter)
 app.use('/complaint', complaintRouter);
+
+app.use('/categories', categoryRouter);
+app.use('/profile', profileRouter);
+
 
 //Starting Server
 
