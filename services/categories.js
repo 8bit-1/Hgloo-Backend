@@ -1,7 +1,7 @@
 const db = require('./db');
 
 async function getCategory(){
-    const result = await db.query(`SELECT nombrecategoria FROM categoria where idEstadoCategoria=1`);
+    const result = await db.query(`SELECT idCategoria, nombrecategoria FROM categoria where idEstadoCategoria=1`);
     if (!result) { return [];}
     return result;
 }
