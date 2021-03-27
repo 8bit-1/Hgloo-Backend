@@ -1,6 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const admin = require("firebase-admin");
+const serviceAccount = require("./enviroment/hgloo-app-firebase-adminsdk-y9ri1-c447f95a4f.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 //Rutas
 const inicioRouter = require('./routes/Inicio');

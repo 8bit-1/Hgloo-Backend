@@ -1,6 +1,6 @@
 const db = require('./db');
 
-async function getProfile(idUser){
+async function getProfile(idUser) {
     let result = await db.queryP(`SELECT idUsuario as uid, nombreUsuario, 
     apellidoUsuario, 
     correo, 
