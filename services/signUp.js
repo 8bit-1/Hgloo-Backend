@@ -1,4 +1,5 @@
 const db = require('./db');
+const user = require('./User');
 
 async function registrar(Usuario){
     const result = await db.queryP(
@@ -16,6 +17,8 @@ async function registrar(Usuario){
             Usuario.genre
         ]
     );
+
+    user.addSocialMedia( Usuario.redesSociales, Usuario.id );
 
     let message = 'Error creating User';
 

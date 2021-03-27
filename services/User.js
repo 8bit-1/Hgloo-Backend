@@ -15,7 +15,7 @@ async function update(Usuario,idUser){
             Usuario.coin,
             Usuario.urlWhatsapp,
             Usuario.urlFacebook,
-            Usuario.urlInstagram,
+            Usuario.urlInstagram
         ]
     );
 
@@ -105,10 +105,89 @@ async function getInfo(idUser){
 }
 
 
+
+
+
+async function subscribedCategoryUser(idUser){
+    const result = await db.queryP(`SELECT categoria.idCategoria ,categoria.nombreCategoria as Categoria FROM usuario
+                                    INNER JOIN categoriausuario
+                                    on usuario.idUsuario=categoriausuario.idUsuario
+                                    INNER JOIN categoria  
+                                    ON categoriausuario.idCategoria=categoria.idCategoria where usuario.idUsuario=?
+                                    AND categoria.idEstadoCategoria=1;`,[idUser]);
+    if (!result) { return [];}
+    return result;
+}
+
+
+async function subsCategory(Categories,idUser){
+    const result = await db.queryP(
+        `INSERT INTO categoriausuario VALUES(?,?);`,[Categories.subsCategory,idUser]
+    );
+
+    let message = 'Error suscribed category';
+
+    if (result.affectedRows) {
+        message = 'add subscription to category sucessfully';
+    }
+
+    return message;
+}
+
+
+async function unsubsCategory(Categories,idUser){
+    const result = await db.queryP(
+        `DELETE FROM categoriausuario where idCategoria=? and idUsuario=?;`,[Categories.subsCategory,idUser]
+    );
+
+    let message = 'Error unsuscribed category';
+
+    if (result.affectedRows) {
+        message = 'unsubscription to category sucessfully';
+    }
+
+    return message;
+}
+
+
+async function getShowComents(idUser,init,fin){
+    const result = await db.queryP(`SELECT u.urlfotoPerfil,c.Comentado,u.nombreUsuario,u.correo,c.comentario, c.fecha from comentario c
+    INNER JOIN usuario u ON c.comentador=u.idUsuario
+    where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC
+    limit ?, ?`,[idUser,init,fin-init]);
+    if (!result) { return [];}
+    return result;
+}
+
+async function updateProfilePicture(Usuario,idUser){
+    const result = await db.queryP(
+        `update usuario set urlFotoPerfil=? where idUsuario=?`,
+        [
+            Usuario.urlPhoto,
+            idUser
+            
+        ]
+    );
+
+    let message = 'Error updating Profile Picture';
+
+    if (result.affectedRows) {
+        message = 'User Profile Picture sucessfully';
+    }
+
+    return message;
+}
+
+
 module.exports={
     update,
     getQualificationUser,
     getUser,
     addSocialMedia,
-    getInfo
+    subscribedCategoryUser,
+    subsCategory,
+    unsubsCategory,
+    getShowComents,
+    getInfo,
+    updateProfilePicture
 }
