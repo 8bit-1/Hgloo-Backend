@@ -29,4 +29,16 @@ router.get('/:token', async function(req, res, next){
         console.error("Error while getting User: ",error)
     }
 });
+
+router.get('/showprofile/:idUser', async function(req, res, next){
+    try {
+        res.json( await profilE.getProfile(req.params.idUser));
+    } catch (error) {
+        console.error("Error while getting User: ",error)
+    }
+    
+} );
+
+
+
 module.exports = router;
