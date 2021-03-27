@@ -13,8 +13,7 @@ const categoryRouter = require('./routes/categories');
 const commentaryRouter = require('./routes/Commentary');
 const profileRouter = require('./routes/Profile');
 const reportsRouter = require('./routes/Reports');
-
-
+const coinRouter = require('./routes/coin');
 const app = express();
 
 //Settings
@@ -40,7 +39,7 @@ app.use('/complaint', complaintRouter);
 app.use('/categories', categoryRouter);
 app.use('/profile', profileRouter);
 app.use('/reports', reportsRouter);
-
+app.use('/coin', coinRouter);
 //Starting Server
 
 app.listen(app.get('port'), () => {
