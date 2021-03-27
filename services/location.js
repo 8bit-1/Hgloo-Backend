@@ -1,14 +1,14 @@
 const db = require('./db');
 
 async function getCountry(){
-    const result = await db.query(`SELECT pais FROM pais`);
+    const result = await db.query(`SELECT idPais, pais FROM pais`);
     if (!result) { return [];}
     return result;
 }
 
 async function getProvinceById(id){
     const result = await db.queryP(
-        `SELECT departamento FROM departamento where idPais=?`,[id]);
+        `SELECT departamento FROM idDepartamento, departamento where idPais=?`,[id]);
 
     if (!result) { return [];}
     return result;
@@ -16,7 +16,7 @@ async function getProvinceById(id){
 
 async function getCityById(id){
     const result = await db.queryP(
-        `SELECT nombreciudad FROM ciudad where idDepartamento=?`,[id]);
+        `SELECT idCiudad, nombreciudad FROM ciudad where idDepartamento=?`,[id]);
 
     if (!result) { return [];}
     return result;
