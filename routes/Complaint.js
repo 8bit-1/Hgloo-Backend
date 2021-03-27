@@ -24,4 +24,14 @@ router.post('/report-product/:whistleblower/:idProduct', async function (req,res
     }
 });
 
+//POST
+router.post('/report-comment/:whistleblower/:commentary', async function (req,res, next){  
+    try {
+        res.json( await complainT.complaintComment(req.body,req.params.whistleblower,req.params.commentary) );
+    } catch (error) {
+        console.error(`Error while reporting comment`, error.message);
+        next(error);
+    }
+});
+
 module.exports = router;
