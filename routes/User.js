@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const admin = require('firebase-admin');
 
 //const mysqlConnection = require('../database');
 const usuarioS = require('../services/User')
 
 //POST
-router.post('/update/:idUser', async function (req,res, next){  
+router.post('/update/:token', async function (req,res, next){  
     try {
-        res.json( await usuarioS.update(req.body,req.params.idUser) );
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const user = await usuarioS.update(req.body,uid);
+            res.json( user );     
+        });   
     } catch (error) {
         console.error(`Error while creating user`, error.message);
         next(error);
@@ -93,9 +98,13 @@ router.get('/showInfoUser/:idUser', async function(req, res, next){
 } );
   
 //POST
-router.post('/updateProfilePicture/:idUser', async function (req,res, next){  
+router.post('/updateProfilePicture/:token', async function (req,res, next){  
     try {
-        res.json( await usuarioS.updateProfilePicture(req.body,req.params.idUser) );
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+        const uid = decodedToken.uid;
+        const user = await usuarioS.updateProfilePicture(req.body,uid);
+        res.json( user );     
+        });   
     } catch (error) {
         console.error(`Error while creating user`, error.message);
         next(error);
