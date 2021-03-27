@@ -2,11 +2,12 @@ const db = require('./db');
 
 async function addComplaint(complaint,whistleblower,denounced){
     const result = await db.queryP(
-        `INSERT INTO denuncia (descripcionDenuncia,idDenunciante,idDenunciado) VALUES (?, ?, ?)`,
+        `call denunciarUsuario(?, ?, ?, ?)`,
         [
             complaint.description,
             whistleblower,
-            denounced
+            denounced,
+            complaint.report
         ]
     );
 
@@ -21,16 +22,14 @@ async function addComplaint(complaint,whistleblower,denounced){
 
 //POST
             
-async function reportProduct(report,whistleblower,idProduct,idReport){
+async function reportProduct(report,whistleblower,idProduct){
     const result = await db.queryP(
-        `insert into denuncia(descripcionDenuncia,idDenunciante,idProductoDenunciado,idDenunciado,idReporte) 
-         VALUES(?,?,?,(SELECT usuario FROM producto where idProducto=?),?)`,
+        `call denunciarProducto(?,?,?,?)`,
         [
             report.description,
             whistleblower,
             idProduct,
-            idProduct,
-            report.idReport
+            report.report
         ]
     );
 
@@ -43,9 +42,30 @@ async function reportProduct(report,whistleblower,idProduct,idReport){
 }
 
 
+//POST
+            
+async function complaintComment(report,whistleblower,commentary){
+    const result = await db.queryP(
+        `call denunciarComentario(?,?,?)`,
+        [
+            whistleblower,
+            commentary,
+            report.report
+        ]
+    );
+
+    let message = 'Error when reporting the comment';
+
+    if (result.affectedRows) {
+        message = 'Comment successfully reported';
+    }
+    return message;
+}
+
 
 
 module.exports={
     addComplaint,
-    reportProduct
+    reportProduct,
+    complaintComment
 }
