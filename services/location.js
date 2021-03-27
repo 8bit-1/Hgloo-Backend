@@ -8,7 +8,7 @@ async function getCountry(){
 
 async function getProvinceById(id){
     const result = await db.queryP(
-        `SELECT departamento FROM idDepartamento, departamento where idPais=?`,[id]);
+        `SELECT idDepartamento, departamento FROM departamento where idPais=?`,[id]);
 
     if (!result) { return [];}
     return result;
