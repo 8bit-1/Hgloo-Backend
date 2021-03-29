@@ -151,7 +151,7 @@ async function unsubsCategory(Categories,idUser){
 
 
 async function getShowComents(idUser,init,fin){
-    const result = await db.queryP(`SELECT u.urlfotoPerfil,c.Comentado,u.nombreUsuario,u.correo,c.comentario, c.fecha from comentario c
+    const result = await db.queryP(`SELECT u.urlfotoPerfil,c.Comentado,CONCAT(u.nombreUsuario," ",u.apellidoUsuario)as Nombre,u.correo,c.comentario, c.fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC
     limit ?, ?`,[idUser,init,fin-init]);
