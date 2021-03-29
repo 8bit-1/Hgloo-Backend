@@ -31,7 +31,7 @@ async function getProfile(idUser){
     ge.Genero;`,[idUser]);
     const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idUser])
     const calificacion = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Calificacion FROM calificacion where calificado=?`,[idUser])
-    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC`,[idUser]);
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
@@ -110,7 +110,7 @@ async function mostProfile(idUser){
     mo.idMoneda;`,[idUser]);
     const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idUser])
     const calificacion = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Calificacion FROM calificacion where calificado=?`,[idUser])
-    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC`,[idUser]);
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
@@ -185,7 +185,7 @@ async function showProfile(idUser){
     ge.Genero;`,[idUser]);
     const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idUser])
     const calificacion = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Calificacion FROM calificacion where calificado=?`,[idUser])
-    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario)as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC`,[idUser]);
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
