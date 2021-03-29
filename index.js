@@ -21,6 +21,7 @@ const profileRouter = require('./routes/Profile');
 const reportsRouter = require('./routes/Reports');
 const coinRouter = require('./routes/coin');
 const genreRouter = require('./routes/genre');
+const qualificationRouter = require('./routes/Qualification');
 const app = express();
 
 //Settings
@@ -48,6 +49,7 @@ app.use('/profile', profileRouter);
 app.use('/reports', reportsRouter);
 app.use('/coin', coinRouter);
 app.use('/genre', genreRouter);
+app.use('/qualification', qualificationRouter);
 //Starting Server
 
 app.listen(app.get('port'), () => {
