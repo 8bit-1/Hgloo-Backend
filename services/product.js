@@ -62,8 +62,25 @@ async function registerProduct(Producto,idUser){
     return message;
 }
 
+async function deleteProduct(idProduct,idUser){
+    const result = await db.queryP(
+        `UPDATE producto SET idEstadoProducto=2 where idProducto=? and usuario=?`,
+        [idProduct,idUser]
+    );
+
+    let message = 'Error deleting product';
+
+    if (result.affectedRows) {
+        message = 'Product deleted sucessfully';
+    }
+    return message;
+}
+
+
+
 module.exports={
     getProduct,
     getCountProduct,
-    registerProduct
+    registerProduct,
+    deleteProduct
 }
