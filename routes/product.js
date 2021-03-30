@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
-const producT = require('../services/product')
+const admin = require('firebase-admin');
+const producT = require('../services/product');
 
 //GET
 router.get('/product/:idUser', async function(req, res, next){
@@ -11,6 +11,35 @@ router.get('/product/:idUser', async function(req, res, next){
         console.error("Error while getting products: ",error)
     }
 } );
+
+//POST
+router.post('/register/:token', async function (req,res, next){
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const user = await producT.registerProduct(req.body,uid);
+            res.json(user)});
+    } catch (error) {
+        console.error('Product register succesfull', error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/delete/:idProduct/:token', async function (req,res, next){
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const user = await producT.deleteProduct(req.params.idProduct,uid);
+            res.json(user)});
+    } catch (error) {
+        console.error('Product deleting succesfull', error.message);
+        next(error);
+    }
+});
+
+
+
 
 //GET
 router.get('/productCount/:idUser', async function(req, res, next){
