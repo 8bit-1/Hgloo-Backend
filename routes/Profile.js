@@ -4,6 +4,7 @@ const admin = require('firebase-admin');
 
 const profilE = require('../services/Profile');
 
+
 router.get('/profile/:token', async function(req, res, next){
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
@@ -39,6 +40,17 @@ router.get('/showprofile/:idUser', async function(req, res, next){
     
 } );
 
-
+router.get('/view/:token/:idSeller', async function(req, res, next){
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const user = await profilE.viewProfile(uid,req.params.idSeller);
+            res.json( user );
+        });
+        
+    } catch (error) {
+        console.error("Error while getting view User: ",error)
+    }
+});
 
 module.exports = router;
