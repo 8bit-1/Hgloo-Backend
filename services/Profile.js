@@ -263,7 +263,7 @@ async function viewProfile(idBuyer,idSeller){
     const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idSeller])
     const promedio = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Promedio FROM calificacion where calificado=?`,[idSeller])
     const calificacion = await db.queryP(`SELECT Calificacion FROM calificacion where Calificado=? AND Calificador=?`,[idSeller,idBuyer])
-    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result2 = await db.queryP(`SELECT u.idUsuario as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC`,[idSeller]);
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
