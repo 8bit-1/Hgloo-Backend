@@ -103,7 +103,46 @@ async function Productbyname(Product){
     return result;
 }    
             
-    
+
+async function homeProduct(idProduct){
+    let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
+    CONCAT(ciudad.nombreCiudad,", ",departamento.Departamento ,", ", pais.pais) AS location,  condicion.condicion AS state,
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price ,categoria.nombreCategoria AS category, producto.fechaPublicacion AS publicationDate FROM producto 
+    INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+    AND producto.idPaisProducto=ciudad.idPais 
+    INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+    INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+    INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+    INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+    INNER JOIN categoria ON producto.idCategoriaProducto=categoria.idCategoria
+    WHERE  producto.idEstadoProducto<>2
+    AND producto.idProducto=?`,[idProduct]);
+    const imagenes = await db.queryP(` SELECT urlImagenProducto as imagenes FROM imagenesurl 
+                                      im INNER JOIN producto p ON im.idProducto= p.idProducto
+                                      where p.idProducto=?`,[idProduct])
+    const result3 = await db.queryP(`SELECT c.Comentador as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+                                    INNER JOIN usuario u ON c.comentador=u.idUsuario
+                                    INNER JOIN producto p ON c.idProductoComentado= p.idProducto
+                                    where c.idProductoComentado is not null AND c.idProductoComentado=? ORDER BY c.fecha DESC`,[idProduct]);
+   const result4 = await db.queryP(`SELECT u.idUsuario, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre, u.correo, u.telefono FROM usuario u
+                                   INNER JOIN producto p ON p.usuario= u.idUsuario where p.idProducto=?`,[idProduct]);                                
+    const result5 = await db.queryP(`SELECT rs.Redes,ru.urlRedSocial as url FROM redesUsuario ru
+                                    INNER JOIN redesSociales rs ON ru.idRedSocial=rs.idredesSociales
+                                    INNER JOIN usuario u ON ru.idUsuarioRed=u.idUsuario
+                                    INNER JOIN producto p ON p.usuario=u.idUsuario
+                                    where p.idProducto=? AND ru.urlRedSocial<>""`,[idProduct]);
+    result=result[0];
+    result["imagenes"]=imagenes;
+    result["comentarios"]=result3;
+    result["usuario"]=result4;
+    result["redesSociales"]=result5;
+    return [result];
+}    
+
+
+
+
 
 
 module.exports={
@@ -111,5 +150,6 @@ module.exports={
     getCountProduct,
     registerProduct,
     deleteProduct,
-    Productbyname
+    Productbyname,
+    homeProduct
 }
