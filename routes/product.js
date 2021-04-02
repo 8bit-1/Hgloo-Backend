@@ -59,4 +59,14 @@ router.post('/register-product/:idUser', async function (req,res, next){
         next(error);
     }
 });
+
+//GET
+router.get('/filtrer/:Product', async function(req, res, next){
+    try {
+        res.json( await producT.Productbyname(req.params.Product));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 module.exports = router;
