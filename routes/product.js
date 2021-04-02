@@ -69,4 +69,13 @@ router.get('/filtrer/:Product', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/home/:idProduct', async function(req, res, next){
+    try {
+        res.json( await producT.homeProduct(req.params.idProduct));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 module.exports = router;
