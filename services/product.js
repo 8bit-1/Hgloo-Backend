@@ -76,11 +76,40 @@ async function deleteProduct(idProduct,idUser){
     return message;
 }
 
+async function Productbyname(Product){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND MATCH(Producto) Against (?)
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Product]
+    );
+    if (result.length==0) { return ['No se encontraron resultados para esta busqueda'];}
+    const resultados=result.length;
+    result=result[0];
+    result["Resultados"]=resultados;
+    return result;
+}    
+            
+    
 
 
 module.exports={
     getProduct,
     getCountProduct,
     registerProduct,
-    deleteProduct
+    deleteProduct,
+    Productbyname
 }
