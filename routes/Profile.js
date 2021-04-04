@@ -53,4 +53,13 @@ router.get('/view/:token/:idSeller', async function(req, res, next){
     }
 });
 
+router.get('/pictureProfile/:idUser', async function(req, res, next){
+    try {
+        res.json( await profilE.viewPictureProfile(req.params.idUser));
+    } catch (error) {
+        console.error("Error while getting profile picture User: ",error)
+    }
+    
+} );
+
 module.exports = router;
