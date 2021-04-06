@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
-const complainT = require('../services/Complaint')
+const admin = require("firebase-admin");
+const complainT = require('../services/Complaint');
 
 //POST
 router.post('/add-complaint/:whistleblower/:denounced', async function (req,res, next){  
@@ -23,5 +23,32 @@ router.post('/report-product/:whistleblower/:idProduct', async function (req,res
         next(error);
     }
 });
+
+//POST
+router.post('/report-comment/:whistleblower/:commentary', async function (req,res, next){  
+    try {
+        res.json( await complainT.complaintComment(req.body,req.params.whistleblower,req.params.commentary) );
+    } catch (error) {
+        console.error(`Error while reporting comment`, error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/report-comments/:token/:commentary', async function (req,res, next){  
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const user = await complainT.complaintComment(req.body,uid,req.params.commentary);
+            res.json( user );
+        });
+    } catch (error) {
+        console.error(`Error while reporting comment`, error.message);
+        next(error);
+    }
+});
+
+
+
 
 module.exports = router;
