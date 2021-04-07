@@ -107,7 +107,7 @@ async function Productbyname(Product){
 async function homeProduct(idProduct){
     let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
     CONCAT(ciudad.nombreCiudad,", ",departamento.Departamento ,", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price ,categoria.nombreCategoria AS category, producto.fechaPublicacion AS publicationDate FROM producto 
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price ,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
