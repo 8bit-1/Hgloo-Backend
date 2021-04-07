@@ -12,6 +12,15 @@ router.get('/product/:idUser', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/allProducts', async function(req, res, next){
+    try {
+        res.json( await producT.getAllProducts(req.params.idUser));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 //POST
 router.post('/register/:token', async function (req,res, next){
     try {
@@ -59,4 +68,23 @@ router.post('/register-product/:idUser', async function (req,res, next){
         next(error);
     }
 });
+
+//GET
+router.get('/filtrer/:Product', async function(req, res, next){
+    try {
+        res.json( await producT.Productbyname(req.params.Product));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
+//GET
+router.get('/home/:idProduct', async function(req, res, next){
+    try {
+        res.json( await producT.homeProduct(req.params.idProduct));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 module.exports = router;
