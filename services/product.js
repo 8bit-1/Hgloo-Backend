@@ -141,7 +141,25 @@ async function homeProduct(idProduct){
 }    
 
 
-
+async function getAllProducts(){
+    const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
+    ciudad.nombreCiudad, pais.pais,condicion.condicion,
+    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.urlImagenProducto) AS imagen,producto.fechaPublicacion  FROM producto 
+    INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+    AND producto.idPaisProducto=ciudad.idPais 
+    INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+    INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+    INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+    INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+    WHERE  producto.idEstadoProducto<>2
+    AND imagenesurl.idProducto=producto.idProducto
+    GROUP BY producto.idProducto
+    ORDER BY producto.fechaPublicacion DESC LIMIT 25`);
+    if (!result) { return [];}
+    return result;
+}
 
 
 
@@ -151,5 +169,6 @@ module.exports={
     registerProduct,
     deleteProduct,
     Productbyname,
-    homeProduct
+    homeProduct,
+    getAllProducts
 }
