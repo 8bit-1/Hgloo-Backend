@@ -144,7 +144,7 @@ async function homeProduct(idProduct){
 async function getAllProducts(){
     const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
     ciudad.nombreCiudad, pais.pais,condicion.condicion,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.urlImagenProducto) AS imagen,producto.fechaPublicacion  FROM producto 
+    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.urlImagenProducto) AS imagen,CONVERT( producto.fechaPublicacion,char) AS fecha  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
