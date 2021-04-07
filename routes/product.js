@@ -12,6 +12,15 @@ router.get('/product/:idUser', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/allProducts', async function(req, res, next){
+    try {
+        res.json( await producT.getAllProducts(req.params.idUser));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 //POST
 router.post('/register/:token', async function (req,res, next){
     try {
