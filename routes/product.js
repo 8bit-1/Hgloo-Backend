@@ -69,4 +69,59 @@ router.get('/filtrer/:Product', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/filtrerby/:Category/:Province/:City', async function(req, res, next){
+    try {
+        
+        if(req.params.Province==0 && req.params.City==0){
+            res.json( await producT.ProductbyCategory(req.params.Category));
+        }
+        else if(req.params.City==0){
+            res.json( await producT.ProductbyCatPro(req.params.Category,req.params.Province));
+        }
+        else if(req.params.Province==0){
+            res.json( await producT.ProductbyCatCy(req.params.Category,req.params.City));
+        }
+        
+        else if(req.params.Category==0){
+            res.json( await producT.ProductbyProCy(req.params.Province, req.params.City));
+        }
+        else if(req.params.Category==0 && req.params.City==0){
+            res.json( await producT.ProductbyProvince(req.params.Province));
+        }
+        else {
+            res.json( await producT.ProductbyCatProCi(req.params.Category,req.params.Province,req.params.City));
+        }
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
+//GET
+router.get('/filter/:Category/:Province/:City', async function(req, res, next){
+    try {
+        
+        if(!req.params.Province && !req.params.City){
+            res.json( await producT.ProductbyCategory(req.params.Category));
+        }
+        else if(req.params.City==0){
+            res.json( await producT.ProductbyCatPro(req.params.Category,req.params.Province));
+        }
+        else if(req.params.Province==0){
+            res.json( await producT.ProductbyCatCy(req.params.Category,req.params.City));
+        }
+        
+        else if(req.params.Category==0){
+            res.json( await producT.ProductbyProCy(req.params.Province, req.params.City));
+        }
+        else if(req.params.Category==0 && req.params.City==0){
+            res.json( await producT.ProductbyProvince(req.params.Province));
+        }
+        else {
+            res.json( await producT.ProductbyCatProCi(req.params.Category,req.params.Province,req.params.City));
+        }
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
 module.exports = router;
