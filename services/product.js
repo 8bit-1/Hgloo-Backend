@@ -103,6 +103,141 @@ async function Productbyname(Product){
     return result;
 }    
             
+async function ProductbyCatProCi(Category,Province,City){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idCategoriaProducto=? AND producto.idDepartamentoProducto=? AND producto.idCiudadProducto=?
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Category,Province,City]
+    );
+      return result;
+}    
+
+async function ProductbyCatPro(Category,Province){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idCategoriaProducto=? AND producto.idDepartamentoProducto=? 
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Category,Province]
+    );
+      return result;
+}    
+
+async function ProductbyCatCy(Category,City){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idCategoriaProducto=? AND  producto.idCiudadProducto=?
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Category,City]
+    );
+      return result;
+}    
+
+async function ProductbyProCy(Province,City){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idDepartamentoProducto=? AND producto.idCiudadProducto=?
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Province,City]
+    );
+      return result;
+}    
+async function ProductbyCategory(Category){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idCategoriaProducto=? 
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Category]
+    );
+      return result;
+}    
+async function ProductbyProvince(Province){
+    let result = await db.queryP(
+        `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.idDepartamentoProducto=? 
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC`,
+        [Province]
+    );
+      return result;
+}    
 
 async function homeProduct(idProduct){
     let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
@@ -125,18 +260,39 @@ async function homeProduct(idProduct){
                                     INNER JOIN usuario u ON c.comentador=u.idUsuario
                                     INNER JOIN producto p ON c.idProductoComentado= p.idProducto
                                     where c.idProductoComentado is not null AND c.idProductoComentado=? ORDER BY c.fecha DESC`,[idProduct]);
-   const result4 = await db.queryP(`SELECT u.idUsuario, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre, u.correo, u.telefono FROM usuario u
+    const result4 = await db.queryP(`SELECT u.idUsuario, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre, u.correo, u.telefono FROM usuario u
                                    INNER JOIN producto p ON p.usuario= u.idUsuario where p.idProducto=?`,[idProduct]);                                
     const result5 = await db.queryP(`SELECT rs.Redes,ru.urlRedSocial as url FROM redesUsuario ru
                                     INNER JOIN redesSociales rs ON ru.idRedSocial=rs.idredesSociales
                                     INNER JOIN usuario u ON ru.idUsuarioRed=u.idUsuario
                                     INNER JOIN producto p ON p.usuario=u.idUsuario
                                     where p.idProducto=? AND ru.urlRedSocial<>""`,[idProduct]);
+
+    const productNombre = await db.queryP(`SELECT Producto FROM producto where idProducto=?`,[idProduct]); 
+    const productos = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+    CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
+    INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+    AND producto.idPaisProducto=ciudad.idPais 
+    INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+    INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+    INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+    INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+    WHERE  producto.idEstadoProducto<>2
+    AND producto.idProducto<>?
+    AND (MATCH(Producto) Against (?)
+    OR producto.idCategoriaProducto=(SELECT idCategoriaProducto FROM producto where idProducto=?))
+    AND imagenesurl.idProducto=producto.idProducto
+    GROUP BY producto.idProducto
+    ORDER BY producto.Producto, producto.fechaPublicacion DESC LIMIT 10`,[idProduct,productNombre[0].Producto,idProduct]);
     result=result[0];
     result["imagenes"]=imagenes;
     result["comentarios"]=result3;
     result["usuario"]=result4;
     result["redesSociales"]=result5;
+    result["Sugerencias"]=productos;
     return [result];
 }    
 
@@ -169,6 +325,12 @@ module.exports={
     registerProduct,
     deleteProduct,
     Productbyname,
+    ProductbyCatProCi,
+    ProductbyCatPro,
+    ProductbyCatCy,
+    ProductbyProCy,
+    ProductbyProvince,
+    ProductbyCategory,
     homeProduct,
     getAllProducts
 }
