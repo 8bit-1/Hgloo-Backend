@@ -23,6 +23,7 @@ const coinRouter = require('./routes/coin');
 const genreRouter = require('./routes/genre');
 const qualificationRouter = require('./routes/Qualification');
 const conditionRouter = require('./routes/Condition');
+const publicityRouter = require('./routes/Publicity');
 const app = express();
 
 //Settings
@@ -52,6 +53,7 @@ app.use('/coin', coinRouter);
 app.use('/genre', genreRouter);
 app.use('/qualification', qualificationRouter);
 app.use('/condition', conditionRouter);
+app.use('/publicity', publicityRouter);
 //Starting Server
 
 app.listen(app.get('port'), () => {
