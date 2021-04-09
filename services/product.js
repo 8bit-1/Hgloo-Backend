@@ -260,7 +260,7 @@ async function homeProduct(idProduct){
                                     INNER JOIN usuario u ON c.comentador=u.idUsuario
                                     INNER JOIN producto p ON c.idProductoComentado= p.idProducto
                                     where c.idProductoComentado is not null AND c.idProductoComentado=? ORDER BY c.fecha DESC`,[idProduct]);
-    const result4 = await db.queryP(`SELECT u.idUsuario, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre, u.correo, u.telefono FROM usuario u
+    const result4 = await db.queryP(`SELECT u.idUsuario, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre, u.urlFotoPerfil, u.correo, u.telefono FROM usuario u
                                    INNER JOIN producto p ON p.usuario= u.idUsuario where p.idProducto=?`,[idProduct]);                                
     const result5 = await db.queryP(`SELECT rs.Redes,ru.urlRedSocial as url FROM redesUsuario ru
                                     INNER JOIN redesSociales rs ON ru.idRedSocial=rs.idredesSociales
