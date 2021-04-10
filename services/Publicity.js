@@ -21,7 +21,8 @@ async function getPublicity(){
     const idProductos = await db.queryP(`SELECT idProductoPublicidad FROM publicidad`);
    
     let result = await  db.queryP(
-            `SELECT producto.idProducto as idProducto, usuario.idUsuario as idUsuario,  CONCAT(usuario.nombreUsuario," ",usuario.apellidoUsuario) as nombre FROM usuario 
+            `SELECT producto.idProducto as idProducto, usuario.idUsuario as idUsuario,  CONCAT(usuario.nombreUsuario," ",usuario.apellidoUsuario) as nombre,
+            usuario.urlFotoPerfil as fotoPerfil FROM usuario 
             INNER JOIN producto ON producto.usuario=usuario.idUsuario
             INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto`);  
        
