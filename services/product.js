@@ -256,7 +256,7 @@ async function homeProduct(idProduct){
     const imagenes = await db.queryP(` SELECT urlImagenProducto as imagenes FROM imagenesurl 
                                       im INNER JOIN producto p ON im.idProducto= p.idProducto
                                       where p.idProducto=?`,[idProduct])
-    const result3 = await db.queryP(`SELECT c.Comentador as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result3 = await db.queryP(`SELECT c.idComentarios as idComentario,c.Comentador as id ,u.urlfotoPerfil,CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
                                     INNER JOIN usuario u ON c.comentador=u.idUsuario
                                     INNER JOIN producto p ON c.idProductoComentado= p.idProducto
                                     where c.idProductoComentado is not null AND c.idProductoComentado=? ORDER BY c.fecha DESC`,[idProduct]);
