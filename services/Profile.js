@@ -116,7 +116,7 @@ async function mostProfile(idUser){
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
     redesUsuario ON idRedSocial=idredesSociales
     WHERE redesUsuario.idUsuarioRed=?`,[idUser]);
-    const result3 = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+    const result3 = await db.queryP(`SELECT producto.idProducto AS idProduct, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -269,7 +269,7 @@ async function viewProfile(idBuyer,idSeller){
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
     redesUsuario ON idRedSocial=idredesSociales
     WHERE redesUsuario.idUsuarioRed=?`,[idSeller]);
-    const result3 = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+    const result3 = await db.queryP(`SELECT producto.idProducto AS idProduct, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
