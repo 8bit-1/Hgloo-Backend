@@ -75,23 +75,24 @@ async function postEmail(){
         result[i]["Categorias"]=categorias[i];
     }
 
-    let productos=[];
+    
     let products=[];
     let producto=[];
     let cat=[];
     let otros=[];
-    let cate=[];
+
     for (var i=0; i<idUsuarios.length; i++){ 
         cat=[];
-        cat= await  db.queryP(` SELECT idCategoria FROM categoriausuario where idUsuario=? `,
+        cat= await  db.queryP(` SELECT cu.idCategoria, c.nombreCategoria FROM categoriausuario cu 
+                                                INNER JOIN categoria c ON c.idCategoria=cu.idCategoria 
+                                                where cu.idUsuario=? `,
         [idUsuarios[i].idUsuario]);
         products[i]=[];
         for (var j=0; j<cat.length; j++){ 
             producto=[];
-            cate="";
-            producto= await  db.queryP(` SELECT  producto.Producto,
+            producto= await  db.queryP(` SELECT producto.idProducto, producto.Producto,
             ciudad.nombreCiudad, 
-            MIN(imagenesurl.urlImagenProducto) AS imagen, producto.fechaPublicacion as Fecha  FROM producto 
+            MIN(imagenesurl.urlImagenProducto) AS imagen, CONVERT(producto.fechaPublicacion,char) as Fecha  FROM producto 
             INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
             AND  producto.idDepartamentoProducto=ciudad.idDepartamento
             AND producto.idPaisProducto=ciudad.idPais 
@@ -108,15 +109,15 @@ async function postEmail(){
             ORDER BY producto.fechaPublicacion DESC; `,
             [cat[j].idCategoria]);
             otros=[];
-            for (var k=0; k<producto.length; k++){ 
-                otros.push(producto[k]);
-            }
-            let cate=[];
-            cate=await  db.queryP(` SELECT nombreCategoria from categoria where idCategoria=?`,
-            [cat[j].idCategoria]);
-            productos[cate[0].nombreCategoria]=otros;
-            products[i].push(productos[j]);
-            console.log(cate);
+            const productoxCat={};
+            productoxCat[cat[j].nombreCategoria]=producto;
+            productoxCat["Codigo"]=cat[j].idCategoria;
+            // for (var k=0; k<producto.length; k++){ 
+            //     otros.push(producto[k]);
+            // }
+            // otros.push(productoxCat);
+            // productos[j]=otros;
+            products[i].push(productoxCat);
         }
           
     }
