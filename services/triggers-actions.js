@@ -4,8 +4,8 @@ class configHgloo {
     apiKey = '96fabda298-6cf779576c-qqyeae';
 
     constructor() {
-        this.setExchangesRates();
-        setInterval( this.setExchangesRates , 86400000);
+        // this.setExchangesRates();
+        // setInterval( this.setExchangesRates , 86400000);
     }
     
     setExchangesRates() {
