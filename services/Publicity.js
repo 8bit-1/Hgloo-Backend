@@ -79,7 +79,6 @@ async function postEmail(){
     let products=[];
     let producto=[];
     let cat=[];
-    let otros=[];
 
     for (var i=0; i<idUsuarios.length; i++){ 
         cat=[];
@@ -112,18 +111,14 @@ async function postEmail(){
             const productoxCat={};
             productoxCat[cat[j].nombreCategoria]=producto;
             productoxCat["Codigo"]=cat[j].idCategoria;
-            // for (var k=0; k<producto.length; k++){ 
-            //     otros.push(producto[k]);
-            // }
-            // otros.push(productoxCat);
-            // productos[j]=otros;
             products[i].push(productoxCat);
         }
           
     }
     
-    for (var i=0; i<idUsuarios.length; i++){ 
-        result[i]["Productos"]=products[i];
+    for (var i=0; i<idUsuarios.length; i++) {
+        delete result[i]["Categorias"];
+        result[i]["Productos"] = products[i];
     }
     return result;
 }
