@@ -232,8 +232,7 @@ async function showProfile(idUser){
 
 
 async function viewProfile(idBuyer,idSeller){
-    let result = await db.queryP(`SELECT idUsuario as uid, nombreUsuario, 
-    apellidoUsuario, 
+    let result = await db.queryP(`SELECT idUsuario as uid, CONCAT(nombreUsuario, ' ', apellidoUsuario) as nombre, 
     correo, 
     telefono, 
     urlFotoPerfil, 
