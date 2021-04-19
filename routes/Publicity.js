@@ -26,4 +26,13 @@ router.get('/getPublicity', async function(req, res, next){
         console.error("Error while getting Genre: ",error)
     }
 } );
+
+//GET
+router.get('/getEmail', async function(req, res, next){
+    try {
+        res.json( await publI.postEmail());
+    } catch (error) {
+        console.error("Error while getting Genre: ",error)
+    }
+} );
 module.exports = router;
