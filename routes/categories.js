@@ -28,7 +28,7 @@ router.post('/delete-category/:idCategory', async function (req,res, next){
 //POST
 router.post('/activate-category/:idCategory', async function (req,res, next){  
     try {
-        res.json( await categorY.acivateCategory(req.params.idCategory) );
+        res.json( await categorY.activateCategory(req.params.idCategory) );
     } catch (error) {
         console.error(`Error while activating category`, error.message);
         next(error);
