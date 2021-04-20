@@ -57,9 +57,45 @@ return message;
 }
 
 
+async function updateCategory(Category,idCategory){
+    const result = await db.queryP(
+        `UPDATE categoria SET nombreCategoria=? where idCategoria=?`,[Category.nombreCategoria,idCategory]);
+    if (!result) { return [];
+    }
+    
+    let message = 'Error updating validity';
+    if (result.affectedRows) {
+        message = 'Validity updated sucessfully';
+    }
+
+return message;
+
+}
+
+
+async function acivateCategory(idCategory){
+    const result = await db.queryP(
+        `UPDATE categoria set idEstadoCategoria=1 where idCategoria=?`,[idCategory]);
+
+    if (!result) { return [];
+    
+    }
+
+    let message = 'Error deleting category';
+
+    if (result.affectedRows) {
+        message = 'Category deleted sucessfully';
+    }
+
+    return message;
+
+}
+
 module.exports = {
     getCategory,
     deleteCategory,
     createCategory,
-    updateValidity
+    updateValidity,
+    updateCategory,
+    acivateCategory
 }
