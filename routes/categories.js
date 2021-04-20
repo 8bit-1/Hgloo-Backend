@@ -24,6 +24,18 @@ router.post('/delete-category/:idCategory', async function (req,res, next){
     }
 });
 
+
+//POST
+router.post('/activate-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.acivateCategory(req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while activating category`, error.message);
+        next(error);
+    }
+});
+
+
 //POST
 router.post('/create-category', async function (req,res, next){  
     try {
@@ -44,6 +56,18 @@ router.post('/update-validity', async function (req,res, next){
         next(error);
     }
 });
+
+
+//POST
+router.post('/update-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.updateCategory(req.body,req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while updateing validity`, error.message);
+        next(error);
+    }
+});
+
 
 
 module.exports=router;
