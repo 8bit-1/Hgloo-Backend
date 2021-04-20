@@ -25,6 +25,25 @@ async function deleteCategory(idCategory){
 }
 
 
+async function activateCategory(idCategory){
+    const result = await db.queryP(
+        `UPDATE categoria set idEstadoCategoria=1 where idCategoria=?`,[idCategory]);
+
+    if (!result) { return [];
+    
+    }
+
+    let message = 'Error activating category';
+
+    if (result.affectedRows) {
+        message = 'Category activated sucessfully';
+    }
+
+    return message;
+
+}
+
+
 async function createCategory(Category){
         const result = await db.queryP(
             `INSERT INTO categoria (nombreCategoria) VALUES (?)`,[Category.name]);
@@ -85,5 +104,6 @@ module.exports = {
     createCategory,
     updateValidity,
     updateCategory,
-    getDisabledCategory
+    getDisabledCategory,
+    activateCategory
 }
