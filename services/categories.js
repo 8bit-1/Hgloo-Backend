@@ -72,24 +72,12 @@ return message;
 
 }
 
-
-async function acivateCategory(idCategory){
-    const result = await db.queryP(
-        `UPDATE categoria set idEstadoCategoria=1 where idCategoria=?`,[idCategory]);
-
-    if (!result) { return [];
-    
-    }
-
-    let message = 'Error deleting category';
-
-    if (result.affectedRows) {
-        message = 'Category deleted sucessfully';
-    }
-
-    return message;
-
+async function getDisabledCategory(){
+    const result = await db.query(`SELECT idCategoria,nombrecategoria FROM categoria where idEstadoCategoria=2`);
+    if (!result) { return [];}
+    return result;
 }
+
 
 module.exports = {
     getCategory,
@@ -97,5 +85,5 @@ module.exports = {
     createCategory,
     updateValidity,
     updateCategory,
-    acivateCategory
+    getDisabledCategory
 }
