@@ -69,5 +69,14 @@ router.post('/update-category/:idCategory', async function (req,res, next){
 });
 
 
+router.get('/disabledCategory', async function(req, res, next){
+    try {
+        res.json( await categorY.getDisabledCategory());
+    } catch (error) {
+        console.error("Error while getting categories: ",error)
+    }
+} );
+
+
 
 module.exports=router;
