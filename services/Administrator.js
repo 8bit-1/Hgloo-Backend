@@ -72,9 +72,24 @@ async function unsubscribeProduct2(idAdmin,idProduct){
 
 }
 
+async function userByDate(){
+    let años=[]
+    años= await db.queryP(`SELECT DISTINCT(YEAR(fechaRegistro)) as year FROM usuario`)
+    let result=[];
+    let data=[];
+
+    for(var j=0;j<años.length;j++){
+        años[j]["data"]=await db.queryP(`SELECT MONTH(fechaRegistro)as month,COUNT(idUsuario) as users FROM usuario 
+                                     where YEAR(fechaRegistro)=? GROUP BY MONTH(fechaRegistro)`,[años[j].year])    
+    }
+
+    return años;
+}    
+
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
     unsubscribeUser2,
-    unsubscribeProduct2
+    unsubscribeProduct2,
+    userByDate
 }
