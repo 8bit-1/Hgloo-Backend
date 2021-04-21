@@ -44,4 +44,13 @@ router.post('/unsubscribeProduct2/:idAdmin/:idProduct', async function (req,res,
 });
 
 
+router.get('/getUsersDate', async function(req, res, next){
+    try {
+        res.json( await admiN.userByDate(req.body));
+    } catch (error) {
+        console.error("Error while getting users: ",error)
+    }
+} );
+
+
 module.exports=router;
