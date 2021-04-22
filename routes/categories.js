@@ -13,6 +13,15 @@ router.get('/category', async function(req, res, next){
 } );
 
 
+router.get('/maxCategory', async function(req, res, next){
+    try {
+        res.json( await categorY.getMaxCategory());
+    } catch (error) {
+        console.error("Error while getting max categories: ",error)
+    }
+} );
+
+
 
 //POST
 router.post('/delete-category/:idCategory', async function (req,res, next){  
