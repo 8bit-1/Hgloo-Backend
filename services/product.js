@@ -299,7 +299,7 @@ async function homeProduct(idProduct){
 
 
 async function getAllProducts(){
-    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.Producto as productName,
+    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
     CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.urlImagenProducto) AS imgURL,CONVERT( producto.fechaPublicacion,char) AS date  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -319,7 +319,7 @@ async function getAllProducts(){
 }
 
 async function getAllProductsUserLogged( uid ){
-    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.Producto as productName,
+    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
     CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.urlImagenProducto) AS imgURL,CONVERT( producto.fechaPublicacion,char) AS date  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -340,17 +340,16 @@ async function getAllProductsUserLogged( uid ){
 }
 
 async function getProductByQuery( query ) {
+    console.log( query );
     const result = await db.queryP( query );
-    console.log( result );
     if ( !result ) { return []; }
     return result;
 }
 
 async function searchProduct( word ) {
-    const result = await db.queryP( `SELECT DISTINCT pro.idProducto, pro.Producto, 
-                                     pro.fechaPublicacion, pro.costo, mon.Moneda, 
-                                     mon.idMoneda, cat.nombreCategoria, ciu.nombreCiudad, 
-                                     pais.Pais, es.Estado, MIN( img.urlImagenProducto ) as imagen 
+    const result = await db.queryP( `SELECT DISTINCT pro.idProducto, pro.Producto as productName, pro.usuario, 
+                                     pro.fechaPublicacion as date, CONCAT(pro.costo, " ", mon.Moneda) AS price, 
+                                     mon.idMoneda, cat.nombreCategoria, CONCAT(ciu.nombreCiudad,", ",pais.pais) as location, con.condicion, MIN( img.urlImagenProducto ) as imgURL 
                                      FROM producto as pro INNER JOIN categoria as cat ON cat.idCategoria = pro.idCategoriaProducto 
                                     INNER JOIN ciudad as ciu 
                                     ON ciu.idCiudad = pro.idCiudadProducto 
@@ -360,8 +359,8 @@ async function searchProduct( word ) {
                                     ON pais.idPais = dep.idPais 
                                     INNER JOIN moneda as mon 
                                     ON mon.idMoneda = pro.idMoneda 
-                                    INNER JOIN estado as es 
-                                    ON es.idEstado = pro.idEstadoProducto 
+                                    INNER JOIN condicion as con
+                                    ON con.idCondicion = pro.idCondicion 
                                     INNER JOIN imagenesurl as img 
                                     ON img.idProducto = pro.idProducto
                                     WHERE pro.Producto LIKE "%${ word }%"` );

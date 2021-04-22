@@ -131,8 +131,7 @@ router.get('/filter/:Category/:Province/:City', async function(req, res, next){
 
 router.post( '/byQuery', async ( req, res, next ) => {
     try {
-        res.send( await producT.getProductByQuery( req.body.sqlQuery ) );
-        res.end();
+        res.json( await producT.getProductByQuery( req.body.sqlQuery ) );
     } catch (error) {
         console.error("Error while getting products: ",error);
     }
