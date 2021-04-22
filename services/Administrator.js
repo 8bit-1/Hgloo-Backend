@@ -89,10 +89,6 @@ async function userByDate(){
 async function userByYear(){
     let años=[]
     años= await db.queryP(`SELECT YEAR(fechaRegistro) as year, COUNT(idUsuario)as users FROM usuario group by(YEAR(fechaRegistro))`)
-  //  for(var j=0;j<años.length;j++){
-   //   años[j]["users"]=await db.queryP(`SELECT COUNT(idUsuario) as users FROM usuario where YEAR(fechaRegistro)=? GROUP BY YEAR(fechaRegistro)`,[años[j].year])    
-   // }
-
     return años;
 }   
 
