@@ -52,5 +52,14 @@ router.get('/getUsersDate', async function(req, res, next){
     }
 } );
 
+router.get('/getUsersYear', async function(req, res, next){
+    try {
+        res.json( await admiN.userByYear(req.body));
+    } catch (error) {
+        console.error("Error while getting users: ",error)
+    }
+} );
+
+
 
 module.exports=router;
