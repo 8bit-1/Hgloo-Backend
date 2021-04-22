@@ -6,6 +6,12 @@ async function getCategory(){
     return result;
 }
 
+async function getMaxCategory(){
+    const result = await db.query(`SELECT  idCategoria,nombrecategoria FROM categoria where idCategoria=(SELECT MAX(idCategoria) FROM categoria)`);
+    if (!result) { return [];}
+    return result;
+}
+
 async function deleteCategory(idCategory){
     const result = await db.queryP(
         `UPDATE categoria set idEstadoCategoria=2 where idCategoria=?`,[idCategory]);
@@ -52,7 +58,7 @@ async function createCategory(Category){
         
         let message = 'Error creating category';
         if (result.affectedRows) {
-            message = 'Category created sucessfully';
+            message=getMaxCategory();
         }
 
     return message;
@@ -105,5 +111,6 @@ module.exports = {
     updateValidity,
     updateCategory,
     getDisabledCategory,
-    activateCategory
+    activateCategory,
+    getMaxCategory
 }
