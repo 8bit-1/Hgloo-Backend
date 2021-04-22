@@ -215,7 +215,8 @@ async function ProductbyCategory(Category){
         [Category]
     );
       return result;
-}    
+}
+
 async function ProductbyProvince(Province){
     let result = await db.queryP(
         `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
@@ -317,7 +318,56 @@ async function getAllProducts(){
     return result;
 }
 
+async function getAllProductsUserLogged( uid ){
+    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.Producto as productName,
+    CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.urlImagenProducto) AS imgURL,CONVERT( producto.fechaPublicacion,char) AS date  FROM producto 
+    INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+    AND producto.idPaisProducto=ciudad.idPais 
+    INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+    INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+    INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+    INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+    WHERE  producto.idEstadoProducto<>2
+    AND imagenesurl.idProducto=producto.idProducto
+    AND producto.usuario <> '${ uid }'
+    GROUP BY producto.idProducto
+    ORDER BY producto.fechaPublicacion DESC LIMIT 25`);
+    if (!result) { return [];}
+    return result;
+}
 
+async function getProductByQuery( query ) {
+    const result = await db.queryP( query );
+    console.log( result );
+    if ( !result ) { return []; }
+    return result;
+}
+
+async function searchProduct( word ) {
+    const result = await db.queryP( `SELECT DISTINCT pro.idProducto, pro.Producto, 
+                                     pro.fechaPublicacion, pro.costo, mon.Moneda, 
+                                     mon.idMoneda, cat.nombreCategoria, ciu.nombreCiudad, 
+                                     pais.Pais, es.Estado, MIN( img.urlImagenProducto ) as imagen 
+                                     FROM producto as pro INNER JOIN categoria as cat ON cat.idCategoria = pro.idCategoriaProducto 
+                                    INNER JOIN ciudad as ciu 
+                                    ON ciu.idCiudad = pro.idCiudadProducto 
+                                    INNER JOIN departamento as dep 
+                                    ON dep.idDepartamento = pro.idDepartamentoProducto 
+                                    INNER JOIN pais as pais 
+                                    ON pais.idPais = dep.idPais 
+                                    INNER JOIN moneda as mon 
+                                    ON mon.idMoneda = pro.idMoneda 
+                                    INNER JOIN estado as es 
+                                    ON es.idEstado = pro.idEstadoProducto 
+                                    INNER JOIN imagenesurl as img 
+                                    ON img.idProducto = pro.idProducto
+                                    WHERE pro.Producto LIKE "%${ word }%"` );
+    if ( !result ) { return []; }
+    return result;
+}
 
 module.exports={
     getProduct,
@@ -332,5 +382,8 @@ module.exports={
     ProductbyProvince,
     ProductbyCategory,
     homeProduct,
-    getAllProducts
+    getAllProducts,
+    getProductByQuery,
+    searchProduct,
+    getAllProductsUserLogged,
 }

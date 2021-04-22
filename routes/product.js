@@ -21,6 +21,19 @@ router.get('/allProducts', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/productsHome/:token', async function(req, res, next){
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            res.send( await producT.getAllProductsUserLogged( uid ))
+            res.end();
+        });
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
 //POST
 router.post('/register/:token', async function (req,res, next){
     try {
@@ -115,5 +128,23 @@ router.get('/filter/:Category/:Province/:City', async function(req, res, next){
         console.error("Error while getting products: ",error)
     }
 } );
+
+router.post( '/byQuery', async ( req, res, next ) => {
+    try {
+        res.send( await producT.getProductByQuery( req.body.sqlQuery ) );
+        res.end();
+    } catch (error) {
+        console.error("Error while getting products: ",error);
+    }
+});
+
+router.get( '/searchProduct/:word', async ( req, res, next ) => {
+    try {
+        res.send( await producT.searchProduct( req.params.word ) );
+        res.end();
+    } catch ( error ) {
+        console.error("Error while getting products: ",error);
+    }
+});
 
 module.exports = router;

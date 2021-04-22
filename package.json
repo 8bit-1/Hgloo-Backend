@@ -19,12 +19,16 @@
   "homepage": "https://github.com/8bit-1/Hgloo-Backend#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "email-templates": "^2.7.1",
     "express": "^4.17.1",
     "firebase-admin": "^9.5.0",
+    "handlebars": "^4.7.7",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.5.0",
+    "nodemailer-express-handlebars": "^4.0.0",
     "nodemon": "^2.0.7"
   }
 }
