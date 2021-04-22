@@ -7,7 +7,7 @@ async function getCategory(){
 }
 
 async function getMaxCategory(){
-    const result = await db.query(`SELECT MAX(idCategoria)as idCategoria,nombrecategoria FROM categoria;`);
+    const result = await db.query(`SELECT  idCategoria,nombrecategoria FROM categoria where idCategoria=(SELECT MAX(idCategoria) FROM categoria)`);
     if (!result) { return [];}
     return result;
 }
