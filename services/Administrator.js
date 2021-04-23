@@ -92,11 +92,32 @@ async function userByYear(){
     return años;
 }   
 
+async function getTopUsers(){
+    const result = await db.query(`SELECT u.idUsuario as idUser, CONCAT(u.nombreUsuario," ", u.apellidoUsuario) as name, CAST(AVG(c.calificacion) AS DECIMAL(10,0)) as qualification  FROM usuario u
+    INNER JOIN calificacion c ON u.idUsuario=c.Calificado 
+    GROUP BY c.Calificado 
+    ORDER BY calificacion DESC  LIMIT 10`);
+    if (!result) { return [];}
+    return result;
+}
+
+async function getTopCategory(){
+    const result = await db.query(`SELECT cu.idCategoria as idCategory,c.nombreCategoria as category, COUNT(cu.idCategoria)as users FROM categoriausuario cu
+    INNER JOIN categoria c 
+    ON cu.idCategoria= c.idCategoria
+    GROUP BY cu.idCategoria
+    ORDER BY users DESC`);
+    if (!result) { return [];}
+    return result;
+}
+
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
     unsubscribeUser2,
     unsubscribeProduct2,
     userByDate,
-    userByYear
+    userByYear,
+    getTopUsers,
+    getTopCategory
 }
