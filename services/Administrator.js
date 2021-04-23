@@ -111,6 +111,15 @@ async function getTopCategory(){
     return result;
 }
 
+async function getTopProvinces(){
+    const result = await db.query(`SELECT de.idDepartamento, de.Departamento, COUNT(pro.idProducto) Productos FROM producto AS pro
+    INNER JOIN departamento de ON de.idDepartamento=pro.idDepartamentoProducto
+    WHERE pro.idEstadoProducto<>2
+    GROUP BY de.idDepartamento
+    ORDER BY Productos desc;`);
+    if (!result) { return [];}
+    return result;
+}
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
@@ -119,5 +128,6 @@ module.exports={
     userByDate,
     userByYear,
     getTopUsers,
-    getTopCategory
+    getTopCategory,
+    getTopProvinces
 }
