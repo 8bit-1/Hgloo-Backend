@@ -60,6 +60,21 @@ router.get('/getUsersYear', async function(req, res, next){
     }
 } );
 
+router.get('/getTopUsers', async function(req, res, next){
+    try {
+        res.json( await admiN.getTopUsers(req.body));
+    } catch (error) {
+        console.error("Error while getting users: ",error)
+    }
+} );
+
+router.get('/getTopCategories', async function(req, res, next){
+    try {
+        res.json( await admiN.getTopCategory(req.body));
+    } catch (error) {
+        console.error("Error while getting categories: ",error)
+    }
+} );
 
 
 module.exports=router;
