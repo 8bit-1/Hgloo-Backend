@@ -24,7 +24,9 @@ async function getPublicity(){
             `SELECT producto.idProducto as idProducto, usuario.idUsuario as idUsuario,  CONCAT(usuario.nombreUsuario," ",usuario.apellidoUsuario) as nombre,
             usuario.urlFotoPerfil as fotoPerfil FROM usuario 
             INNER JOIN producto ON producto.usuario=usuario.idUsuario
-            INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto`);  
+            INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto
+            WHERE producto.idEstadoProducto<>2
+            OR usuario.idEstado<>2`);  
        
     
     let imagenes=[];
@@ -34,7 +36,7 @@ async function getPublicity(){
         imagen= await  db.queryP(` SELECT imagenesurl.urlImagenProducto as imagen FROM imagenesurl 
         INNER JOIN producto ON producto.idProducto=imagenesurl.idProducto
         INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto 
-        WHERE publicidad.idProductoPublicidad=? `,
+        WHERE publicidad.idProductoPublicidad=? LIMIT 3 `,
         [idProductos[i].idProductoPublicidad]);
         otro=[];
         for (var j=0; j<imagen.length; j++){ 
