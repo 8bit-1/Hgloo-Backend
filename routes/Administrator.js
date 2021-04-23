@@ -76,5 +76,13 @@ router.get('/getTopCategories', async function(req, res, next){
     }
 } );
 
+router.get('/getTopProvinces', async function(req, res, next){
+    try {
+        res.json( await admiN.getTopProvinces(req.body));
+    } catch (error) {
+        console.error("Error while getting categories: ",error)
+    }
+} );
+
 
 module.exports=router;
