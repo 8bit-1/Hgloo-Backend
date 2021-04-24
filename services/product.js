@@ -3,7 +3,7 @@ const db = require('./db');
 async function getProduct(idUser){
     const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
     ciudad.nombreCiudad, pais.pais,condicion.condicion,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.urlImagenProducto) AS imagen  FROM producto 
+    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.idImagenesURL) AS idImagen, imagenesurl.urlImagenProducto as imagen FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -215,7 +215,8 @@ async function ProductbyCategory(Category){
         [Category]
     );
       return result;
-}    
+}
+
 async function ProductbyProvince(Province){
     let result = await db.queryP(
         `SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
@@ -269,7 +270,7 @@ async function homeProduct(idProduct){
                                     where p.idProducto=? AND ru.urlRedSocial<>""`,[idProduct]);
 
     const productNombre = await db.queryP(`SELECT Producto FROM producto where idProducto=?`,[idProduct]); 
-    const productos = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.urlImagenProducto) AS imgURL, producto.Producto AS productName,
+    const productos = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.idImagenesURL) AS idImagen, imagenesurl.urlImagenProducto as imagen, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -297,27 +298,93 @@ async function homeProduct(idProduct){
 }    
 
 
-async function getAllProducts(){
-    const result = await db.queryP(`SELECT producto.idProducto as idProduct, producto.Producto as productName,
-    CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.urlImagenProducto) AS imgURL,CONVERT( producto.fechaPublicacion,char) AS date  FROM producto 
-    INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
-    AND  producto.idDepartamentoProducto=ciudad.idDepartamento
-    AND producto.idPaisProducto=ciudad.idPais 
-    INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
-    INNER JOIN pais ON producto.idPaisProducto=pais.idPais
-    INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
-    INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
-    WHERE  producto.idEstadoProducto<>2
-    AND imagenesurl.idProducto=producto.idProducto
-    GROUP BY producto.idProducto
-    ORDER BY producto.fechaPublicacion DESC LIMIT 25`);
+async function getAllProducts( max, min ){
+    const result = await db.queryP(`WITH productos AS (
+        SELECT ROW_NUMBER() OVER(ORDER BY producto.idProducto ASC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
+        CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY maxAmount ASC
+        ) SELECT idProduct, usuario, productName, location , state,
+        price, imgURL, datep FROM  productos
+        WHERE maxAmount BETWEEN ${ min } AND ${ max }
+        ORDER BY datep DESC;`);
     if (!result) { return [];}
     return result;
 }
 
+async function getAllProductsUserLogged( uid, max, min ){
+    const result = await db.queryP(`WITH productos AS (
+        SELECT ROW_NUMBER() OVER(ORDER BY producto.fechaPublicacion DESC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
+        CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND imagenesurl.idProducto=producto.idProducto
+        AND producto.usuario <> '${ uid }'
+        GROUP BY producto.idProducto
+        ORDER BY datep DESC
+        ) SELECT idProduct, usuario, productName, location , state,
+        price, imgURL, datep FROM  productos
+        WHERE maxAmount BETWEEN ${ min } AND ${ max }
+        ORDER BY maxAmount ASC;`);
+    if (!result) { return [];}
+    return result;
+}
 
+async function getProductByQuery( query ) {
+    console.log( query );
+    const result = await db.queryP( query );
+    if ( !result ) { return []; }
+    return result;
+}
+
+async function searchProduct( word ) {
+    const result = await db.queryP( `SELECT DISTINCT pro.idProducto as idProduct, pro.Producto as productName, pro.usuario, 
+                                     pro.fechaPublicacion as date, CONCAT(pro.costo, " ", mon.Moneda) AS price, 
+                                     mon.idMoneda, cat.nombreCategoria, CONCAT(ciu.nombreCiudad,", ",pais.pais) as location, con.condicion, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL 
+                                     FROM producto as pro INNER JOIN categoria as cat ON cat.idCategoria = pro.idCategoriaProducto 
+                                    INNER JOIN ciudad as ciu 
+                                    ON ciu.idCiudad = pro.idCiudadProducto 
+                                    INNER JOIN departamento as dep 
+                                    ON dep.idDepartamento = pro.idDepartamentoProducto 
+                                    INNER JOIN pais as pais 
+                                    ON pais.idPais = dep.idPais 
+                                    INNER JOIN moneda as mon 
+                                    ON mon.idMoneda = pro.idMoneda 
+                                    INNER JOIN condicion as con
+                                    ON con.idCondicion = pro.idCondicion 
+                                    INNER JOIN imagenesurl as img 
+                                    ON img.idProducto = pro.idProducto
+                                    WHERE pro.Producto LIKE "%${ word }%"` );
+    if ( !result ) { return []; }
+    return result;
+}
+
+async function getAmoundProduct() {
+    const result = await db.queryP(`SELECT ROW_NUMBER() OVER(ORDER BY idProducto ASC) AS maxAmount FROM producto 
+        ORDER BY maxAmount DESC LIMIT 1;`);
+    
+    if ( !result ) { return 0; }
+    return result;
+}
 
 module.exports={
     getProduct,
@@ -332,5 +399,9 @@ module.exports={
     ProductbyProvince,
     ProductbyCategory,
     homeProduct,
-    getAllProducts
+    getAllProducts,
+    getProductByQuery,
+    searchProduct,
+    getAllProductsUserLogged,
+    getAmoundProduct,
 }

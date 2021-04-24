@@ -25,6 +25,8 @@ const qualificationRouter = require('./routes/Qualification');
 const conditionRouter = require('./routes/Condition');
 const publicityRouter = require('./routes/Publicity');
 const adminRouter = require('./routes/Administrator');
+const emailsRouter = require('./routes/email');
+const configHgloo = require('./services/triggers-actions');
 const app = express();
 
 //Settings
@@ -56,6 +58,7 @@ app.use('/qualification', qualificationRouter);
 app.use('/condition', conditionRouter);
 app.use('/publicity', publicityRouter);
 app.use('/admin', adminRouter);
+app.use('/email', emailsRouter);
 //Starting Server
 
 app.listen(app.get('port'), () => {

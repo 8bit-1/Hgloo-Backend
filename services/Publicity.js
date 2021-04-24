@@ -111,8 +111,9 @@ async function postEmail(){
             [cat[j].idCategoria]);
             otros=[];
             const productoxCat={};
-            productoxCat[cat[j].nombreCategoria]=producto;
-            productoxCat["Codigo"]=cat[j].idCategoria;
+            productoxCat['productos']=producto;
+            productoxCat['nombre'] = cat[j].nombreCategoria;
+            productoxCat["codigo"]=cat[j].idCategoria;
             products[i].push(productoxCat);
         }
           
@@ -120,8 +121,9 @@ async function postEmail(){
     
     for (var i=0; i<idUsuarios.length; i++) {
         delete result[i]["Categorias"];
-        result[i]["Productos"] = products[i];
+        result[i]["Categorias"] = products[i];
     }
+
     return result;
 }
 

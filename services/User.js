@@ -108,7 +108,7 @@ async function getInfo(idUser){
 
 
 
-async function subscribedCategoryUser(idUser){
+async function subscribedCategoryUser(idUser) {
     const result = await db.queryP(`SELECT categoria.idCategoria ,categoria.nombreCategoria as Categoria FROM usuario
                                     INNER JOIN categoriausuario
                                     on usuario.idUsuario=categoriausuario.idUsuario
@@ -128,7 +128,7 @@ async function subsCategory(Categories,idUser){
     let message = 'Error suscribed category';
 
     if (result.affectedRows) {
-        message = 'add subscription to category sucessfully';
+        message = { categoria: Categories.subsCategory };
     }
 
     return message;
@@ -143,7 +143,7 @@ async function unsubsCategory(Categories,idUser){
     let message = 'Error unsuscribed category';
 
     if (result.affectedRows) {
-        message = 'unsubscription to category sucessfully';
+        message = { categoria: Categories.subsCategory };
     }
 
     return message;
