@@ -13,20 +13,20 @@ router.get('/product/:idUser', async function(req, res, next){
 } );
 
 //GET
-router.get('/allProducts', async function(req, res, next){
+router.get('/allProducts/:max/:min', async function(req, res, next){
     try {
-        res.json( await producT.getAllProducts(req.params.idUser));
+        res.json( await producT.getAllProducts(req.params.max, req.params.min));
     } catch (error) {
         console.error("Error while getting products: ",error)
     }
 } );
 
 //GET
-router.get('/productsHome/:token', async function(req, res, next){
+router.get('/productsHome/:token/:max/:min', async function(req, res, next){
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
             const uid = decodedToken.uid;
-            res.send( await producT.getAllProductsUserLogged( uid ))
+            res.send( await producT.getAllProductsUserLogged( uid, req.params.max, req.params.min ))
             res.end();
         });
     } catch (error) {
@@ -143,6 +143,15 @@ router.get( '/searchProduct/:word', async ( req, res, next ) => {
         res.end();
     } catch ( error ) {
         console.error("Error while getting products: ",error);
+    }
+});
+
+router.get( '/maxProduct', async ( req, res, next) => {
+    try {
+        res.send( await producT.getAmoundProduct() );
+        res.end();
+    } catch ( error ) {
+        console.error("Error while getting maxProduct: ",error);
     }
 });
 

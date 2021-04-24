@@ -48,9 +48,12 @@ router.post('/addSocialMedia/:idUser', async function (req,res, next){
 });
 
 //GET
-router.get('/subscribed-category/:idUser', async function(req, res, next){
+router.get('/subscribed-category/:token', async function(req, res, next) {
     try {
-        res.json( await usuarioS.subscribedCategoryUser(req.params.idUser));
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            res.json( await usuarioS.subscribedCategoryUser( uid ));
+        });
     } catch (error) {
         console.error("Error getting subscribed category of user: ",error)
     }
@@ -58,9 +61,12 @@ router.get('/subscribed-category/:idUser', async function(req, res, next){
 
 
 //POST
-router.post('/add-subsCategory/:idUser', async function (req,res, next){  
+router.post('/add-subsCategory/:token', async function (req,res, next) {  
     try {
-        res.json( await usuarioS.subsCategory(req.body,req.params.idUser) );
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            res.json( await usuarioS.subsCategory( req.body, uid ) );  
+        });
     } catch (error) {
         console.error(`Error while suscribed category`, error.message);
         next(error);
@@ -68,9 +74,12 @@ router.post('/add-subsCategory/:idUser', async function (req,res, next){
 });
 
 //POST
-router.post('/un-subsCategory/:idUser', async function (req,res, next){  
+router.post('/un-subsCategory/:token', async function (req,res, next){  
     try {
-        res.json( await usuarioS.unsubsCategory(req.body,req.params.idUser) );
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            res.json( await usuarioS.unsubsCategory(req.body, uid) );
+        });
     } catch (error) {
         console.error(`Error while un suscribed category`, error.message);
         next(error);
