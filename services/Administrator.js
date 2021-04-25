@@ -112,7 +112,7 @@ async function getTopCategory(){
 }
 
 async function getTopProvinces(){
-    const result = await db.query(`SELECT de.Departamento as name, COUNT(pro.idProducto) value FROM producto AS pro
+    const result = await db.query(`SELECT COUNT(pro.idProducto)as value ,de.Departamento as name FROM producto pro
     INNER JOIN departamento de ON de.idDepartamento=pro.idDepartamentoProducto
     WHERE pro.idEstadoProducto<>2
     GROUP BY de.idDepartamento
