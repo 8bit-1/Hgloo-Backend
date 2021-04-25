@@ -102,21 +102,21 @@ async function getTopUsers(){
 }
 
 async function getTopCategory(){
-    const result = await db.query(`SELECT cu.idCategoria as idCategory,c.nombreCategoria as category, COUNT(cu.idCategoria)as users FROM categoriausuario cu
+    const result = await db.query(`SELECT c.nombreCategoria as name, COUNT(cu.idCategoria)as value FROM categoriausuario cu
     INNER JOIN categoria c 
     ON cu.idCategoria= c.idCategoria
     GROUP BY cu.idCategoria
-    ORDER BY users DESC`);
+    ORDER BY value DESC`);
     if (!result) { return [];}
     return result;
 }
 
 async function getTopProvinces(){
-    const result = await db.query(`SELECT de.idDepartamento, de.Departamento, COUNT(pro.idProducto) Productos FROM producto AS pro
+    const result = await db.query(`SELECT de.Departamento as name, COUNT(pro.idProducto) value FROM producto AS pro
     INNER JOIN departamento de ON de.idDepartamento=pro.idDepartamentoProducto
     WHERE pro.idEstadoProducto<>2
     GROUP BY de.idDepartamento
-    ORDER BY Productos desc;`);
+    ORDER BY value desc;`);
     if (!result) { return [];}
     return result;
 }
