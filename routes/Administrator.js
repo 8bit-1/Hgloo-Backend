@@ -84,5 +84,21 @@ router.get('/getTopProvinces', async function(req, res, next){
     }
 } );
 
+router.get('/getProductsDate', async function(req, res, next){
+    try {
+        res.json( await admiN.productsByDate(req.body));
+    } catch (error) {
+        console.error("Error while getting products: ",error)
+    }
+} );
+
+router.get('/getCantReports/:date_min/:date_max', async function(req, res, next){
+    try {
+        res.json( await admiN.getCantReports(req.params.date_min,req.params.date_max));
+    } catch (error) {
+        console.error("Error while getting reports",error)
+    }
+} );
+
 
 module.exports=router;
