@@ -109,4 +109,22 @@ router.get('/getCantReports/:date_min/:date_max', async function(req, res, next)
     }
 } );
 
+//GET
+router.get('/getComplaintUsers', async function(req, res, next){
+    try {
+        res.json( await admiN.getComplaintUsers());
+    } catch (error) {
+        console.error("Error while getting info denunces user: ",error)
+    }
+} );
+
+
+//GET
+router.get('/getComplaintComments', async function(req, res, next){
+    try {
+        res.json( await admiN.getComplaintComments());
+    } catch (error) {
+        console.error("Error while getting info denunces comments: ",error)
+    }
+} );
 module.exports=router;

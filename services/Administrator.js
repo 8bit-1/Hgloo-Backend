@@ -163,7 +163,7 @@ async function getComplaintProducts(){
         otro=[];
         for (var j=0; j<denuncia.length; j++){ 
             otro.push(denuncia[j]);
-            whistleblower= await  db.queryP(` SELECT idUsuario, urlfotoPerfil, nombreUsuario, correo FROM usuario 
+            whistleblower= await  db.queryP(` SELECT idUsuario, urlfotoPerfil, CONCAT(nombreUsuario,' ',apellidoUsuario) nombreUsuario, correo FROM usuario 
             where idUsuario=?`,
             [denuncia[j].whistleblower]);
             otro[j]["Denunciante"]=whistleblower[0];    
@@ -218,6 +218,99 @@ async function getCantReports(date_min,date_max){
     return result;
 }
 
+
+async function getComplaintUsers(){
+    const idDenunciados = await db.queryP(`select du.idDenunciadoU from denuncia d 
+                                        INNER JOIN denunciaUsuario du ON d.idDenuncia=du.idDenunciaU
+                                        INNER JOIN reporteUsuario ru ON du.idReporteUsuario=ru.idReporteUsuario 
+                                        WHERE d.idEstadoDenuncia<>2
+                                        GROUP by du.idDenunciadoU
+                                        ORDER BY du.idDenunciadoU`);
+   
+    let Denunciado = await  db.queryP(`SELECT du.idDenunciadoU as id,CONCAT(u.nombreUsuario,' ',u.apellidoUsuario) as userName,u.urlFotoPerfil as imgURL,u.correo as email FROM denunciaUsuario du 
+                                      INNER JOIN usuario u ON du.idDenunciadoU=u.idUsuario
+                                      WHERE u.idEstado<>2
+                                      GROUP BY du.idDenunciadoU
+                                      ORDER BY du.idDenunciadoU`);  
+       
+    
+    let denuncias={};
+    let denuncia=[];
+    let whistleblower=[];
+    let otro=[];
+    let result=[];
+    for (var i=0; i<idDenunciados.length; i++){ 
+        denuncia= await  db.queryP(`SELECT d.idDenuncia as idComplaint,du.idDenunciadoU as idDenounced, du.idDenuncianteU as whistleblower, r.reporte as report, CONVERT(d.fechaDenuncia,CHAR) as dateComplaint, d.descripcionDenuncia as commentary FROM denuncia d
+        INNER JOIN denunciaUsuario du ON d.idDenuncia= du.idDenunciaU
+        INNER JOIN reporte r ON du.idReporteUsuario=r.idReporte
+        WHERE du.idDenunciadoU=?`,
+        [idDenunciados[i].idDenunciadoU]);
+        
+        otro=[];
+        for (var j=0; j<denuncia.length; j++){ 
+            otro.push(denuncia[j]);
+            whistleblower= await  db.queryP(`SELECT idUsuario, urlfotoPerfil, CONCAT(nombreUsuario,' ',apellidoUsuario) nombreUsuario, correo FROM usuario 
+             where idUsuario=?`,[denuncia[j].whistleblower]);
+            otro[j]["Denunciante"]=whistleblower[0];    
+        }
+        denuncias[i]=otro;
+        
+    }
+    
+    for (var i=0; i<idDenunciados.length; i++){
+        result.push({Usuario:Denunciado[i],Denuncias:denuncias[i]}); 
+    }
+    return result;
+}
+
+
+async function getComplaintComments(){
+    const idComentarios = await db.queryP(`select dc.idComentarioC from denuncia d  INNER JOIN denunciaComentario dc ON d.idDenuncia=dc.idDenunciaC
+                                          WHERE d.idEstadoDenuncia<>2
+                                          GROUP by dc.idComentarioC
+                                          ORDER BY dc.idComentarioC`);
+   
+    let Comentario= await  db.queryP(`SELECT c.idComentarios as idComentario,CONCAT(u.nombreUsuario,' ',apellidoUsuario) comentador,u.urlfotoPerfil,u.correo,c.comentario, CONVERT(c.fecha,CHAR)as fecha from comentario c
+                                     INNER JOIN usuario u ON c.comentador=u.idUsuario
+                                     INNER JOIN denunciaComentario dc ON c.idComentarios=dc.idComentarioC
+                                     GROUP by dc.idComentarioC
+                                     ORDER BY dc.idComentarioC;`);  
+       
+    
+    let denuncias={};
+    let denuncia=[];
+    let whistleblower=[];
+    let otro=[];
+    let result=[];
+    for (var i=0; i<idComentarios.length; i++){ 
+        denuncia= await  db.queryP(` SELECT d.idDenuncia AS idComplaint, u.idUsuario as idDenounced, dc.idDenuncianteC  AS whistleblower,
+         rc.reporteComentario AS report, CONVERT( d.fechaDenuncia,char) AS dateComplaint FROM denunciaComentario dc
+         INNER JOIN  denuncia as d ON d.idDenuncia=dc.idDenunciaC
+         INNER JOIN comentario c ON c.idComentarios=dc.idComentarioC
+         INNER JOIN usuario u ON u.idUsuario=c.comentador
+         INNER JOIN reporteComentario rc ON rc.idReporteComentario=dc.idReporteComentario
+         WHERE c.idComentarios=?`,
+        [idComentarios[i].idComentarioC]);
+        
+        otro=[];
+        for (var j=0; j<denuncia.length; j++){ 
+            otro.push(denuncia[j]);
+            whistleblower= await  db.queryP(`SELECT idUsuario, urlfotoPerfil, CONCAT(nombreUsuario,' ',apellidoUsuario) nombreUsuario, correo FROM usuario 
+             where idUsuario=?`,[denuncia[j].whistleblower]);
+            otro[j]["Denunciante"]=whistleblower[0];    
+        }
+        denuncias[i]=otro;
+        
+    }
+    
+    for (var i=0; i<idComentarios.length; i++){
+        result.push({Comentario:Comentario[i],Denuncias:denuncias[i]}); 
+    }
+    return result;
+}
+
+
+
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
@@ -230,5 +323,7 @@ module.exports={
     getTopProvinces,
     getComplaintProducts,
     productsByDate,
-    getCantReports
+    getCantReports,
+    getComplaintUsers,
+    getComplaintComments
 }
