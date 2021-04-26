@@ -112,7 +112,7 @@ async function getTopCategory(){
 }
 
 async function getTopProvinces(){
-    const result = await db.query(`SELECT COUNT(pro.idProducto)as value ,de.Departamento as name FROM producto pro
+    const result = await db.query(`SELECT de.Departamento as name, COUNT(pro.idProducto) value FROM producto AS pro
     INNER JOIN departamento de ON de.idDepartamento=pro.idDepartamentoProducto
     WHERE pro.idEstadoProducto<>2
     GROUP BY de.idDepartamento
@@ -120,6 +120,67 @@ async function getTopProvinces(){
     if (!result) { return [];}
     return result;
 }
+
+
+async function getComplaintProducts(){
+    const idProductos = await db.queryP(`SELECT dp.idProductoP FROM denunciaProducto dp INNER JOIN denuncia d
+                                        ON d.idDenuncia=dp.idDenunciaP
+                                        WHERE d.idEstadoDenuncia<>2
+                                        GROUP BY idProductoP
+                                        ORDER BY idProductoP`);
+   
+    let Products = await  db.queryP(
+            `SELECT producto.idProducto AS id, producto.Producto AS productName, CONCAT(producto.costo, " ", moneda.Moneda) AS price,
+            CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  producto.descripcion AS descrip, 
+            MIN(imagenesurl.idProducto) as idImage, imagenesurl.urlImagenProducto AS imgURL  FROM producto 
+            INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+            AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+            AND producto.idPaisProducto=ciudad.idPais 
+            INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+            INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+            INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+            INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+            INNER JOIN denunciaProducto ON denunciaProducto.idProductoP=producto.idProducto
+            WHERE  producto.idEstadoProducto<>2
+            GROUP BY denunciaProducto.idProductoP
+            ORDER BY denunciaProducto.idProductoP`);  
+       
+    
+    let denuncias={};
+    let denuncia=[];
+    let whistleblower=[];
+    let otro=[];
+    let result=[];
+    for (var i=0; i<idProductos.length; i++){ 
+        denuncia= await  db.queryP(` SELECT d.idDenuncia AS idComplaint, u.idUsuario as idDenounced, dp.idDenuncianteP  AS whistleblower, r.reporte AS report, CONVERT( d.fechaDenuncia,char) AS dateComplaint, d.descripcionDenuncia AS commentary FROM denunciaProducto  dp
+        INNER JOIN  denuncia as d ON d.idDenuncia=dp.idDenunciaP
+        INNER JOIN producto p ON p.idProducto=dp.idProductoP
+        INNER JOIN usuario u ON u.idUsuario=p.usuario
+        INNER JOIN reporte r ON r.idReporte=dp.idReporte
+        WHERE p.idProducto=?`,
+        [idProductos[i].idProductoP]);
+        
+        otro=[];
+        for (var j=0; j<denuncia.length; j++){ 
+            otro.push(denuncia[j]);
+            whistleblower= await  db.queryP(` SELECT idUsuario, urlfotoPerfil, nombreUsuario, correo FROM usuario 
+            where idUsuario=?`,
+            [denuncia[j].whistleblower]);
+            otro[j]["Denunciante"]=whistleblower[0];    
+        }
+        denuncias[i]=otro;
+        
+    }
+    
+    for (var i=0; i<idProductos.length; i++){
+        result.push({Producto:Products[i],Denuncias:denuncias[i]}); 
+        // result[i]["Producto"]=Products[i];
+        // result[i]["denuncias"]=denuncias[i];
+    }
+    return result;
+}
+
+
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
@@ -129,5 +190,6 @@ module.exports={
     userByYear,
     getTopUsers,
     getTopCategory,
-    getTopProvinces
+    getTopProvinces,
+    getComplaintProducts
 }
