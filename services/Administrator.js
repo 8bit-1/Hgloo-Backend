@@ -181,6 +181,43 @@ async function getComplaintProducts(){
 }
 
 
+
+async function productsByDate(){
+    let años=[]
+    años= await db.queryP(`SELECT DISTINCT(YEAR(fechaPublicacion)) as year FROM producto`)
+    let data=[];
+
+    for(var j=0;j<años.length;j++){
+        años[j]["data"]=await db.queryP(`SELECT MONTHNAME(fechaPublicacion)as month,COUNT(idProducto) as products FROM producto 
+        where YEAR(fechaPublicacion)=? GROUP BY MONTH(fechaPublicacion)`,[años[j].year])    
+    }
+
+    return años;
+}   
+
+async function getCantReports(date_min,date_max){
+    let result = await db.queryP(`select COUNT(dp.idReporte)  productos from denuncia d 
+    INNER JOIN denunciaProducto dp ON d.idDenuncia=dp.idDenunciaP 
+    INNER JOIN reporte r ON dp.idReporte=r.idReporte 
+    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`);
+
+    const denunciaUser= await db.queryP(`select COUNT(du.idReporteUsuario) cantidad from denuncia d 
+    INNER JOIN denunciaUsuario du ON d.idDenuncia=du.idDenunciaU
+    INNER JOIN reporteUsuario ru ON du.idReporteUsuario=ru.idReporteUsuario 
+    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`) 
+    
+    const denunciaComment= await db.queryP(`select COUNT(dc.idReporteComentario) cantidad from denuncia d 
+    INNER JOIN denunciaComentario dc ON d.idDenuncia=dc.idDenunciaC 
+    INNER JOIN reporteComentario rc ON dc.idReporteComentario=rc.idReporteComentario
+    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`);  
+
+    result=result[0];
+    result["usuarios"]=denunciaUser[0].cantidad;
+    result["Comentarios"]=denunciaComment[0].cantidad;
+    
+    return result;
+}
+
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
@@ -191,5 +228,7 @@ module.exports={
     getTopUsers,
     getTopCategory,
     getTopProvinces,
-    getComplaintProducts
+    getComplaintProducts,
+    productsByDate,
+    getCantReports
 }
