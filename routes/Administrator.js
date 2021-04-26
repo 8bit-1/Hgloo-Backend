@@ -84,5 +84,13 @@ router.get('/getTopProvinces', async function(req, res, next){
     }
 } );
 
+//GET
+router.get('/getComplaintProduct', async function(req, res, next){
+    try {
+        res.json( await admiN.getComplaintProducts());
+    } catch (error) {
+        console.error("Error while getting Genre: ",error)
+    }
+} );
 
 module.exports=router;
