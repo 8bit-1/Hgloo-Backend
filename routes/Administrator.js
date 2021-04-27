@@ -127,4 +127,35 @@ router.get('/getComplaintComments', async function(req, res, next){
         console.error("Error while getting info denunces comments: ",error)
     }
 } );
+
+//POST
+router.post('/evaluateComplaintProduct/:idProduct', async function (req,res, next){  
+    try {
+        res.json( await admiN.evaluateComplaintProduct(req.body,req.params.idProduct) );   
+    } catch (error) {
+        console.error(`Complaint succesfull`, error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/evaluateComplaintUser/:idUser', async function (req,res, next){  
+    try {
+        res.json( await admiN.evaluateComplaintUser(req.body,req.params.idUser) );   
+    } catch (error) {
+        console.error(`Complaint succesfull`, error.message);
+        next(error);
+    }
+});
+
+//POST
+router.post('/evaluateComplaintComment/:idCommentary', async function (req,res, next){  
+    try {
+        res.json( await admiN.evaluateComplaintComments(req.body,req.params.idCommentary) );   
+    } catch (error) {
+        console.error(`Complaint succesfull`, error.message);
+        next(error);
+    }
+});
+
 module.exports=router;
