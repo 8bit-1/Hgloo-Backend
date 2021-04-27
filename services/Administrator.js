@@ -199,17 +199,17 @@ async function getCantReports(date_min,date_max){
     let result = await db.queryP(`select COUNT(dp.idReporte)  productos from denuncia d 
     INNER JOIN denunciaProducto dp ON d.idDenuncia=dp.idDenunciaP 
     INNER JOIN reporte r ON dp.idReporte=r.idReporte 
-    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`);
+    WHERE d.fechaDenuncia BETWEEN "${date_min}" AND "${date_max}" `);
 
     const denunciaUser= await db.queryP(`select COUNT(du.idReporteUsuario) cantidad from denuncia d 
     INNER JOIN denunciaUsuario du ON d.idDenuncia=du.idDenunciaU
     INNER JOIN reporteUsuario ru ON du.idReporteUsuario=ru.idReporteUsuario 
-    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`) 
+    WHERE d.fechaDenuncia BETWEEN "${date_min}" AND "${date_max}"`) 
     
     const denunciaComment= await db.queryP(`select COUNT(dc.idReporteComentario) cantidad from denuncia d 
     INNER JOIN denunciaComentario dc ON d.idDenuncia=dc.idDenunciaC 
     INNER JOIN reporteComentario rc ON dc.idReporteComentario=rc.idReporteComentario
-    WHERE d.fechaDenuncia BETWEEN ${date_min} AND ${date_max}`);  
+    WHERE d.fechaDenuncia BETWEEN "${date_min}" AND "${date_max}"`);  
 
     result=result[0];
     result["usuarios"]=denunciaUser[0].cantidad;
