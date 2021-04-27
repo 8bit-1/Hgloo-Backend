@@ -141,7 +141,9 @@ async function getComplaintProducts(){
             INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
             INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
             INNER JOIN denunciaProducto ON denunciaProducto.idProductoP=producto.idProducto
+            INNER JOIN denuncia ON denuncia.idDenuncia=denunciaProducto.idDenunciaP 
             WHERE  producto.idEstadoProducto<>2
+            AND denuncia.idEstadoDenuncia<>2
             GROUP BY denunciaProducto.idProductoP
             ORDER BY denunciaProducto.idProductoP`);  
        
@@ -228,10 +230,11 @@ async function getComplaintUsers(){
                                         ORDER BY du.idDenunciadoU`);
    
     let Denunciado = await  db.queryP(`SELECT du.idDenunciadoU as id,CONCAT(u.nombreUsuario,' ',u.apellidoUsuario) as userName,u.urlFotoPerfil as imgURL,u.correo as email FROM denunciaUsuario du 
-                                      INNER JOIN usuario u ON du.idDenunciadoU=u.idUsuario
-                                      WHERE u.idEstado<>2
-                                      GROUP BY du.idDenunciadoU
-                                      ORDER BY du.idDenunciadoU`);  
+                                        INNER JOIN usuario u ON du.idDenunciadoU=u.idUsuario
+                                        INNER JOIN denuncia d ON d.idDenuncia=du.idDenunciaU
+                                        WHERE u.idEstado<>2
+                                        GROUP BY du.idDenunciadoU
+                                        ORDER BY du.idDenunciadoU`);  
        
     
     let denuncias={};
@@ -271,10 +274,12 @@ async function getComplaintComments(){
                                           ORDER BY dc.idComentarioC`);
    
     let Comentario= await  db.queryP(`SELECT c.idComentarios as idComentario,CONCAT(u.nombreUsuario,' ',apellidoUsuario) comentador,u.urlfotoPerfil,u.correo,c.comentario, CONVERT(c.fecha,CHAR)as fecha from comentario c
-                                     INNER JOIN usuario u ON c.comentador=u.idUsuario
-                                     INNER JOIN denunciaComentario dc ON c.idComentarios=dc.idComentarioC
-                                     GROUP by dc.idComentarioC
-                                     ORDER BY dc.idComentarioC;`);  
+                                    INNER JOIN usuario u ON c.comentador=u.idUsuario
+                                    INNER JOIN denunciaComentario dc ON c.idComentarios=dc.idComentarioC
+                                    INNER JOIN denuncia d ON dc.idDenunciaC=d.idDenuncia
+                                    WHERE d.idEstadoDenuncia<>2
+                                    GROUP by dc.idComentarioC
+                                    ORDER BY dc.idComentarioC;`);  
        
     
     let denuncias={};
@@ -309,8 +314,74 @@ async function getComplaintComments(){
     return result;
 }
 
+async function evaluateComplaintProduct(Product,idProduct){
+    let result = await db.queryP(
+        `SELECT idDenunciaP FROM denunciaProducto WHERE idProductoP=?`,
+        [idProduct]);
 
+    for (var j=0; j<result.length; j++){ 
+        const denuncia = await db.queryP(
+            `UPDATE denuncia set idEstadoDenuncia=2 WHERE idDenuncia=?`,
+            [result[j].idDenunciaP]);   
+        }
+        const denuncia = await db.queryP(
+            `UPDATE producto set idEstadoProducto=? WHERE idProducto=?`,
+            [Product.idEstate, idProduct]);
 
+    let message = 'Error evaluating Complaint';
+
+    if (denuncia.affectedRows) {
+        message = 'Complaint evaluated sucessfully';
+    }
+
+    return message;
+}
+
+async function evaluateComplaintUser(User,idUser){
+    let result = await db.queryP(
+        `SELECT idDenunciaU FROM denunciaUsuario WHERE idDenunciadoU=?`,
+        [idUser]);
+
+    for (var j=0; j<result.length; j++){ 
+        const denuncia = await db.queryP(
+            `UPDATE denuncia set idEstadoDenuncia=2 WHERE idDenuncia=?`,
+            [result[j].idDenunciaU]);   
+        }
+        const denuncia = await db.queryP(
+            `UPDATE usuario set idEstado=? WHERE idUsuario=?`,
+            [User.idEstate, idUser]);
+
+    let message = 'Error evaluating Complaint';
+
+    if (denuncia.affectedRows) {
+        message = 'Complaint evaluated sucessfully';
+    }
+
+    return message;
+}
+
+async function evaluateComplaintComments(Comment,idCommentary){
+    let result = await db.queryP(
+        `SELECT idDenunciaC FROM denunciaComentario WHERE idComentarioC=?`,
+        [idCommentary]);
+
+    for (var j=0; j<result.length; j++){ 
+        const denuncia = await db.queryP(
+            `UPDATE denuncia set idEstadoDenuncia=2 WHERE idDenuncia=?`,
+            [result[j].idDenunciaC]);   
+        }
+        const denuncia = await db.queryP(
+            `UPDATE comentario set idEstadoComentario=? WHERE idComentarios=?`,
+            [Comment.idEstate, idCommentary]);
+
+    let message = 'Error evaluating Complaint';
+
+    if (denuncia.affectedRows) {
+        message = 'Complaint evaluated sucessfully';
+    }
+
+    return message;
+}
 module.exports={
     unsubscribeUser,
     unsubscribeProduct,
@@ -325,5 +396,8 @@ module.exports={
     productsByDate,
     getCantReports,
     getComplaintUsers,
-    getComplaintComments
+    getComplaintComments,
+    evaluateComplaintProduct,
+    evaluateComplaintUser,
+    evaluateComplaintComments
 }
