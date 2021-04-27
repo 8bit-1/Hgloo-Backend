@@ -304,7 +304,7 @@ async function viewProfile(idBuyer,idSeller){
 
 
 async function viewPictureProfile(idUser){
-    const result = await db.queryP(`SELECT  CONCAT(nombreUsuario," ",apellidoUsuario) as nombre, urlFotoPerfil FROM usuario where idUsuario=?`,[idUser]);
+    const result = await db.queryP(`SELECT  CONCAT(nombreUsuario," ",apellidoUsuario) as nombre, urlFotoPerfil, idEstado FROM usuario where idUsuario=?`,[idUser]);
     if (!result) { return [];}
     return result;
 }
