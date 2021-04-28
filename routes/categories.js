@@ -78,14 +78,13 @@ router.post('/update-category/:idCategory', async function (req,res, next){
 });
 
 
-router.get('/disabledCategory', async function(req, res, next){
+router.get('/getValidity', async function(req, res, next){
     try {
-        res.json( await categorY.getDisabledCategory());
+        res.json( await categorY.getValidity());
     } catch (error) {
-        console.error("Error while getting categories: ",error)
+        console.error("Error while getting validity: ",error)
     }
 } );
-
 
 
 module.exports=router;
