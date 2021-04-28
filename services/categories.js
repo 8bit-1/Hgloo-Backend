@@ -103,7 +103,18 @@ async function getDisabledCategory(){
     return result;
 }
 
+async function getValidity(){
+    let result = await db.queryP(`select vigencia as product from categoria where  idCategoria<>8 GROUP BY vigencia  `);
 
+    const service= await db.queryP(`select vigencia from categoria where  idCategoria=8`) 
+    
+   
+    result=result[0];
+    result["service"]=service[0].vigencia;
+    
+    
+    return result;
+}
 module.exports = {
     getCategory,
     deleteCategory,
@@ -112,5 +123,6 @@ module.exports = {
     updateCategory,
     getDisabledCategory,
     activateCategory,
-    getMaxCategory
+    getMaxCategory,
+    getValidity
 }
