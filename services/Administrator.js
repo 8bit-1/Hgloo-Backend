@@ -159,7 +159,7 @@ async function getComplaintProducts(){
         INNER JOIN producto p ON p.idProducto=dp.idProductoP
         INNER JOIN usuario u ON u.idUsuario=p.usuario
         INNER JOIN reporte r ON r.idReporte=dp.idReporte
-        WHERE p.idProducto=?`,
+        WHERE p.idProducto=? AND d.idEstadoDenuncia<>2`,
         [idProductos[i].idProductoP]);
         
         otro=[];
@@ -246,7 +246,7 @@ async function getComplaintUsers(){
         denuncia= await  db.queryP(`SELECT d.idDenuncia as idComplaint,du.idDenunciadoU as idDenounced, du.idDenuncianteU as whistleblower, r.reporte as report, CONVERT(d.fechaDenuncia,CHAR) as dateComplaint, d.descripcionDenuncia as commentary FROM denuncia d
         INNER JOIN denunciaUsuario du ON d.idDenuncia= du.idDenunciaU
         INNER JOIN reporte r ON du.idReporteUsuario=r.idReporte
-        WHERE du.idDenunciadoU=?`,
+        WHERE du.idDenunciadoU=? AND d.idEstadoDenuncia<>2`,
         [idDenunciados[i].idDenunciadoU]);
         
         otro=[];
