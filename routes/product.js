@@ -22,11 +22,11 @@ router.get('/allProducts/:max/:min', async function(req, res, next){
 } );
 
 //GET
-router.get('/productsHome/:token/:max/:min', async function(req, res, next){
+router.get('/productsHome/:token/:page/:coin', async function(req, res, next){
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
             const uid = decodedToken.uid;
-            res.send( await producT.getAllProductsUserLogged( uid, req.params.max, req.params.min ))
+            res.send( await producT.getAllProductsUserLogged( uid, req.params.page, req.params.coin ))
             res.end();
         });
     } catch (error) {
@@ -146,9 +146,16 @@ router.get( '/searchProduct/:word', async ( req, res, next ) => {
     }
 });
 
-router.get( '/maxProduct', async ( req, res, next) => {
+router.get( '/maxProduct/:id', async ( req, res, next) => {
     try {
-        res.send( await producT.getAmoundProduct() );
+        let id = '';
+        if ( req.params.id !== 'none' ) {
+            await admin.auth().verifyIdToken( req.params.id ).then( async ( decodedToken ) => {
+                const uid = decodedToken.uid;
+                id = uid;
+            });
+        }
+        res.send( await producT.getAmoundProduct( id ) );
         res.end();
     } catch ( error ) {
         console.error("Error while getting maxProduct: ",error);

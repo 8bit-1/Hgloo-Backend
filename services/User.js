@@ -104,10 +104,6 @@ async function getInfo(idUser){
     return result;
 }
 
-
-
-
-
 async function subscribedCategoryUser(idUser) {
     const result = await db.queryP(`SELECT categoria.idCategoria ,categoria.nombreCategoria as Categoria FROM usuario
                                     INNER JOIN categoriausuario

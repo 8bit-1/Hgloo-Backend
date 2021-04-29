@@ -39,7 +39,7 @@ async function getProfile(idUser){
     WHERE redesUsuario.idUsuarioRed=?`,[idUser]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -108,7 +108,7 @@ async function mostProfile(idUser){
     us.idCiudad,
     ge.idGenero,
     mo.idMoneda;`,[idUser]);
-    const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idUser])
+    const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=? AND producto.idEstadoProducto<>2`,[idUser])
     const calificacion = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Calificacion FROM calificacion where calificado=?`,[idUser])
     const result2 = await db.queryP(`SELECT c.idComentarios as idComentario,u.idUsuario as id ,u.urlfotoPerfil, CONCAT(u.nombreUsuario," ",u.apellidoUsuario) as nombre,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
@@ -118,7 +118,7 @@ async function mostProfile(idUser){
     WHERE redesUsuario.idUsuarioRed=?`,[idUser]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS idProduct, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+    producto.costo, moneda.Moneda, CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -131,7 +131,8 @@ async function mostProfile(idUser){
     AND producto.usuario=?
     AND imagenesurl.idProducto=producto.idProducto
     GROUP BY producto.idProducto
-    ORDER BY producto.fechaPublicacion DESC`,[idUser]);
+    ORDER BY producto.fechaPublicacion DESC
+    LIMIT 0,20`,[idUser]);
     const result5 = await db.queryP(`SELECT categoria.idCategoria  FROM usuario
     INNER JOIN categoriausuario
     on usuario.idUsuario=categoriausuario.idUsuario
@@ -232,7 +233,7 @@ async function showProfile(idUser){
 
 
 async function viewProfile(idBuyer,idSeller){
-    let result = await db.queryP(`SELECT idUsuario as uid, CONCAT(nombreUsuario, ' ', apellidoUsuario) as nombre, 
+    let result = await db.queryP(`SELECT idUsuario as uid, CONCAT(nombreUsuario, ' ', apellidoUsuario) as nombreUsuario, 
     correo, 
     telefono, 
     urlFotoPerfil, 
@@ -259,10 +260,10 @@ async function viewProfile(idBuyer,idSeller){
     dep.Departamento, 
     us.idCiudad,
     ge.Genero;`,[idSeller]);
-    const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto  where usuario=?`,[idSeller])
+    const cantidadProductos = await db.queryP(`SELECT COUNT(usuario) as CantidadProductos from producto where usuario=? AND producto.idEstadoProducto<>2`,[idSeller])
     const promedio = await db.queryP(`SELECT CAST(AVG(calificacion) AS DECIMAL(10,0)) AS Promedio FROM calificacion where calificado=?`,[idSeller])
     const calificacion = await db.queryP(`SELECT Calificacion FROM calificacion where Calificado=? AND Calificador=?`,[idSeller,idBuyer])
-    const result2 = await db.queryP(`SELECT c.idComentarios as idComentario,u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
+    const result2 = await db.queryP(`SELECT c.idComentarios as idComentario,u.idUsuario as id ,u.urlfotoPerfil,u.nombreUsuario, u.apellidoUsuario,u.correo,c.comentario, CONVERT(c.fecha,char) AS fecha from comentario c
     INNER JOIN usuario u ON c.comentador=u.idUsuario
     where c.idProductoComentado is null AND c.Comentado=? ORDER BY c.fecha DESC`,[idSeller]);
     const result4 = await db.queryP(`SELECT redesSociales.redes as name, redesUsuario.urlRedSocial as url FROM redesSociales INNER JOIN 	
@@ -270,7 +271,7 @@ async function viewProfile(idBuyer,idSeller){
     WHERE redesUsuario.idUsuarioRed=?`,[idSeller]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS idProduct, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -283,7 +284,7 @@ async function viewProfile(idBuyer,idSeller){
     AND producto.usuario=?
     AND imagenesurl.idProducto=producto.idProducto
     GROUP BY producto.idProducto
-    ORDER BY producto.fechaPublicacion DESC`,[idSeller]);
+    ORDER BY producto.fechaPublicacion DESC LIMIT 20, 20`,[idSeller]);
     const result5 = await db.queryP(`SELECT categoria.idCategoria  FROM usuario
     INNER JOIN categoriausuario
     on usuario.idUsuario=categoriausuario.idUsuario
@@ -304,20 +305,75 @@ async function viewProfile(idBuyer,idSeller){
 
 
 async function viewPictureProfile(idUser){
-    const result = await db.queryP(`SELECT  CONCAT(nombreUsuario," ",apellidoUsuario) as nombre, urlFotoPerfil, idEstado FROM usuario where idUsuario=?`,[idUser]);
+    const result = await db.queryP(`SELECT  CONCAT(nombreUsuario," ",apellidoUsuario) as nombre, urlFotoPerfil, idMonedaUsuario, idEstado FROM usuario where idUsuario=?`,[idUser]);
     if (!result) { return [];}
     return result;
 }
 
+async function getMyProductsByCategory( uid, idCategoria, word, page) {
+    let maxAmountQuery = await db.queryP(`
+        SELECT COUNT( * ) as amount FROM producto WHERE producto.idEstadoProducto<>2
+        AND producto.usuario = '${ uid }'` + 
+        ( ( idCategoria != 'none' ) ? ' AND producto.idCategoriaProducto =' + idCategoria + ' ' : '') +
+        ( ( word != 'none' ) ? ' AND producto.Producto LIKE "%' + word + '%" ' : '' ));
 
+    let query = `SELECT  producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
+        CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.usuario = '${ uid }'` + 
+        ( ( idCategoria != 'none' ) ? ' AND producto.idCategoriaProducto =' + idCategoria + ' ' : '') +
+        ( ( word != 'none' ) ? ' AND producto.Producto LIKE "%' + word + '%" ' : '' ) + 
+        ` AND imagenesurl.idProducto = producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC
+        LIMIT ${ page }, 20`;
 
+    const result = await db.queryP( query );
 
+    if (!result) { return [];}
+    return { maxAmountQuery: maxAmountQuery, products: result };
+}
 
+async function getProductsByPages( uid, pages ) {
+    const productos = await db.queryP(`
+        SELECT producto.idProducto AS idProduct, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
+        CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
+        producto.costo, moneda.Moneda, CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
+        INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
+        AND  producto.idDepartamentoProducto=ciudad.idDepartamento
+        AND producto.idPaisProducto=ciudad.idPais 
+        INNER JOIN departamento ON producto.idDepartamentoProducto=departamento.idDepartamento
+        INNER JOIN pais ON producto.idPaisProducto=pais.idPais
+        INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
+        INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
+        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        WHERE  producto.idEstadoProducto<>2
+        AND producto.usuario= '${ uid }'
+        AND imagenesurl.idProducto=producto.idProducto
+        GROUP BY producto.idProducto
+        ORDER BY producto.fechaPublicacion DESC
+        LIMIT ${ pages }, 20;
+    `);
+
+    if ( !productos ) { return [] };
+    return productos;
+}
 
 module.exports={
     getProfile,
     mostProfile,
     showProfile ,
     viewProfile ,
-    viewPictureProfile 
+    viewPictureProfile,
+    getMyProductsByCategory,
+    getProductsByPages
 }

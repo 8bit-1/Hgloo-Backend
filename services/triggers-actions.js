@@ -13,14 +13,15 @@ class configHgloo {
     emailsDates = null;
 
     constructor() {
-        // this.setExchangesRates();
-        // setInterval( this.setExchangesRates , 86400000);
+        this.setExchangesRates();
+        setInterval( this.setExchangesRates , 86400000);
     }
     
     setExchangesRates() {
         axios.get('https://api.fastforex.io/fetch-one?from=USD&to=HNL&api_key=96fabda298-6cf779576c-qqyeae')
         .then(response => {
             this.exchangesRates['2'].HNL = response.data.result.HNL;
+            console.log( this.exchangesRates );
         })
         .catch(error => {
             console.log(error);

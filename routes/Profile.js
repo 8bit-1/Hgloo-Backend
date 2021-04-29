@@ -62,4 +62,49 @@ router.get('/pictureProfile/:idUser', async function(req, res, next){
     
 } );
 
+router.get('/getProductByCategory/:token/:category/:word/:page', async function(req, res, next){
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const productos = await profilE
+                .getMyProductsByCategory( 
+                    uid, 
+                    req.params.category, 
+                    req.params.word,
+                    req.params.page );
+            res.json( productos );
+        });
+        
+    } catch (error) {
+        console.error("Error while getting User: ",error)
+    }
+});
+
+router.get('/getProductByCategoryOut/:uid/:category/:word', async function(req, res, next){
+    try {
+        const productos = await profilE
+            .getMyProductsByCategory(
+                req.params.uid, 
+                req.params.category, 
+                req.params.word );
+        res.json( productos );
+        
+    } catch (error) {
+        console.error("Error while getting User: ",error)
+    }
+});
+
+router.get( '/getProductMpPages/:token/:page', async ( req, res ) => {
+    try {
+        admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
+            const uid = decodedToken.uid;
+            const productos = await profilE.getProductsByPages( uid, req.params.page );
+            res.send( productos );
+            res.end();
+        });
+    } catch (error) {
+        console.error("Error while getting products by pages user", error);
+    }
+});
+
 module.exports = router;
