@@ -86,5 +86,11 @@ router.get('/getValidity', async function(req, res, next){
     }
 } );
 
-
+router.get('/getDisabledCategory', async function(req, res, next){
+    try {
+        res.json( await categorY.getDisabledCategory());
+    } catch (error) {
+        console.error("Error while getting validity: ",error)
+    }
+} );
 module.exports=router;
