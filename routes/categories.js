@@ -13,6 +13,15 @@ router.get('/category', async function(req, res, next){
 } );
 
 
+router.get('/maxCategory', async function(req, res, next){
+    try {
+        res.json( await categorY.getMaxCategory());
+    } catch (error) {
+        console.error("Error while getting max categories: ",error)
+    }
+} );
+
+
 
 //POST
 router.post('/delete-category/:idCategory', async function (req,res, next){  
@@ -23,6 +32,18 @@ router.post('/delete-category/:idCategory', async function (req,res, next){
         next(error);
     }
 });
+
+
+//POST
+router.post('/activate-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.activateCategory(req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while activating category`, error.message);
+        next(error);
+    }
+});
+
 
 //POST
 router.post('/create-category', async function (req,res, next){  
@@ -46,4 +67,30 @@ router.post('/update-validity', async function (req,res, next){
 });
 
 
+//POST
+router.post('/update-category/:idCategory', async function (req,res, next){  
+    try {
+        res.json( await categorY.updateCategory(req.body,req.params.idCategory) );
+    } catch (error) {
+        console.error(`Error while updateing validity`, error.message);
+        next(error);
+    }
+});
+
+
+router.get('/getValidity', async function(req, res, next){
+    try {
+        res.json( await categorY.getValidity());
+    } catch (error) {
+        console.error("Error while getting validity: ",error)
+    }
+} );
+
+router.get('/getDisabledCategory', async function(req, res, next){
+    try {
+        res.json( await categorY.getDisabledCategory());
+    } catch (error) {
+        console.error("Error while getting validity: ",error)
+    }
+} );
 module.exports=router;
