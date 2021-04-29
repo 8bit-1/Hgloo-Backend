@@ -333,8 +333,7 @@ async function evaluateComplaintProduct(Product,idProduct){
         const notificacion = await db.queryP (`INSERT INTO notificaciones (idUsuarioNot, idProductoNot, mensaje,visto)
                             VALUES ((SELECT usuario from producto where idProducto=?), ?, 
                             CONCAT("El producto ", (SELECT Producto from producto where idProducto=?), 
-                            " ha sido dado de baja por que ha recibido denuncias,
-                            comuníquese al correo hgloo.app.c@gmail.com si considera que el producto no debió ser dado de baja"),1)`,[idProduct, idProduct, idProduct]);
+                            " ha sido dado de baja por que ha recibido denuncias, comuníquese al correo hgloo.app.c@gmail.com si considera que el producto no debió ser dado de baja"),1)`,[idProduct, idProduct, idProduct]);
         
     }
     let message = 'Error evaluating Complaint';
