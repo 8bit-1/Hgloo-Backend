@@ -232,7 +232,7 @@ async function getComplaintUsers(){
     let Denunciado = await  db.queryP(`SELECT du.idDenunciadoU as id,CONCAT(u.nombreUsuario,' ',u.apellidoUsuario) as userName,u.urlFotoPerfil as imgURL,u.correo as email FROM denunciaUsuario du 
                                         INNER JOIN usuario u ON du.idDenunciadoU=u.idUsuario
                                         INNER JOIN denuncia d ON d.idDenuncia=du.idDenunciaU
-                                        WHERE u.idEstado<>2
+                                        WHERE u.idEstado<>2 AND  d.idEstadoDenuncia<>2
                                         GROUP BY du.idDenunciadoU
                                         ORDER BY du.idDenunciadoU`);  
        
