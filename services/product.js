@@ -155,8 +155,10 @@ async function getAllProducts(){
         INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
         INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
         INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+        INNER JOIN usuario ON usuario.idUsuario=producto.usuario
         WHERE  producto.idEstadoProducto<>2
         AND imagenesurl.idProducto=producto.idProducto
+        AND usuario.idEstado<>2
         GROUP BY producto.idProducto
         ORDER BY maxAmount ASC
         ) SELECT idProduct, usuario, productName, location , state,
