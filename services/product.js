@@ -142,7 +142,7 @@ async function homeProduct(idProduct){
 }    
 
 
-async function getAllProducts( max, min ){
+async function getAllProducts(){
     const result = await db.queryP(`WITH productos AS (
         SELECT ROW_NUMBER() OVER(ORDER BY producto.idProducto ASC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
@@ -161,13 +161,12 @@ async function getAllProducts( max, min ){
         ORDER BY maxAmount ASC
         ) SELECT idProduct, usuario, productName, location , state,
         price, imgURL, datep FROM  productos
-        ORDER BY datep DESC
-        LIMIT 0, 20`);
+        ORDER BY idProduct DESC`);
     if (!result) { return [];}
     return result;
 }
 
-async function getAllProductsUserLogged( uid, pages, coin ) {
+async function getAllProductsUserLogged( uid, coin ) {
     const result = await db.queryP(`WITH productos AS (
         SELECT ROW_NUMBER() OVER(ORDER BY producto.fechaPublicacion DESC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
@@ -187,8 +186,7 @@ async function getAllProductsUserLogged( uid, pages, coin ) {
         ORDER BY datep DESC
         ) SELECT idProduct, usuario, productName, location , state,
         costo, Moneda, idMoneda, imgURL, datep FROM  productos
-        ORDER BY maxAmount ASC
-        LIMIT ${ pages }, 20;`);
+        ORDER BY maxAmount ASC;`);
     if (!result) { return [];}
 
     result.forEach( ( producto, index ) => {
@@ -255,13 +253,13 @@ async function getProductByQuery( query ) {
     if ( query.moneda != '' ) {
         queryP = `WITH lempiras AS (` + queryFilterProduct + `), dolares AS (`+ copyQueryFilterProduct +`) SELECT * FROM lempiras UNION SELECT * FROM dolares ORDER BY idProduct DESC`;
         productsFilteredLength = await db.queryP( queryP ).length;
-        productsFiltered = await db.queryP( queryP + ' LIMIT 0, 20;' );
+        productsFiltered = await db.queryP( queryP );
         return { amount: productsFilteredLength, products: productsFiltered };
     } else { 
         queryP = queryFilterProduct + `ORDER BY idProduct`;
         productsFilteredLength = await db.queryP( queryP );
         productsFilteredLength = productsFilteredLength.length;
-        productsFiltered = await db.queryP( queryP + ' LIMIT 0, 20;' );
+        productsFiltered = await db.queryP( queryP );
         return { amount: productsFilteredLength, products: productsFiltered };
     }
 }
@@ -362,23 +360,31 @@ function madeOrderBy( query ) {
 }
 
 async function searchProduct( word ) {
-    const result = await db.queryP( `SELECT DISTINCT pro.idProducto as idProduct, pro.Producto as productName, pro.usuario, 
-                                     pro.fechaPublicacion as date, CONCAT(pro.costo, " ", mon.Moneda) AS price, 
-                                     mon.idMoneda, cat.nombreCategoria, CONCAT(ciu.nombreCiudad,", ",pais.pais) as location, con.condicion, MIN(img.idImagenesURL) AS idImage, img.urlImagenProducto as imgURL 
-                                     FROM producto as pro INNER JOIN categoria as cat ON cat.idCategoria = pro.idCategoriaProducto 
-                                    INNER JOIN ciudad as ciu 
-                                    ON ciu.idCiudad = pro.idCiudadProducto 
-                                    INNER JOIN departamento as dep 
-                                    ON dep.idDepartamento = pro.idDepartamentoProducto 
-                                    INNER JOIN pais as pais 
-                                    ON pais.idPais = dep.idPais 
-                                    INNER JOIN moneda as mon 
-                                    ON mon.idMoneda = pro.idMoneda 
-                                    INNER JOIN condicion as con
-                                    ON con.idCondicion = pro.idCondicion 
-                                    INNER JOIN imagenesurl as img 
-                                    ON img.idProducto = pro.idProducto
-                                    WHERE pro.Producto LIKE "%${ word }%"` );
+    const result = await db.queryP( `SELECT pro.idProducto as idProduct, pro.Producto as productName, pro.usuario,
+                                        pro.fechaPublicacion as date, pro.costo, mon.Moneda, mon.idMoneda,
+                                        cat.nombreCategoria, CONCAT(ciu.nombreCiudad,", ",pais.pais) as location,
+                                        con.condicion,  img.urlImagenProducto as imgURL
+                                        FROM producto AS pro
+                                        INNER JOIN categoria as cat 
+                                        ON cat.idCategoria = pro.idCategoriaProducto
+                                        INNER JOIN moneda as mon 
+                                        ON mon.idMoneda = pro.idMoneda
+                                        INNER JOIN ciudad as ciu 
+                                        ON pro.idCiudadProducto = ciu.idCiudad 
+                                        AND  pro.idDepartamentoProducto = ciu.idDepartamento
+                                        AND pro.idPaisProducto = ciu.idPais 
+                                        INNER JOIN departamento as dep 
+                                        ON dep.idDepartamento = pro.idDepartamentoProducto
+                                        INNER JOIN pais as pais 
+                                        ON pais.idPais = dep.idPais 
+                                        INNER JOIN condicion as con
+                                        ON con.idCondicion = pro.idCondicion 
+                                        INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), 
+                                            urlImagenProducto, 
+                                            idProducto FROM imagenesurl GROUP BY idProducto)  as img 
+                                        ON img.idProducto = pro.idProducto
+                                        WHERE pro.Producto LIKE "%${ word }%"
+                                        ORDER BY pro.Producto DESC;` );
     if ( !result ) { return []; }
     return result;
 }

@@ -13,20 +13,20 @@ router.get('/product/:idUser', async function(req, res, next){
 } );
 
 //GET
-router.get('/allProducts/:max/:min', async function(req, res, next){
+router.get('/allProducts', async function(req, res, next){
     try {
-        res.json( await producT.getAllProducts(req.params.max, req.params.min));
+        res.json( await producT.getAllProducts(req.params.page));
     } catch (error) {
         console.error("Error while getting products: ",error)
     }
 } );
 
 //GET
-router.get('/productsHome/:token/:page/:coin', async function(req, res, next){
+router.get('/productsHome/:token/:coin', async function(req, res, next){
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
             const uid = decodedToken.uid;
-            res.send( await producT.getAllProductsUserLogged( uid, req.params.page, req.params.coin ))
+            res.send( await producT.getAllProductsUserLogged( uid, req.params.coin ))
             res.end();
         });
     } catch (error) {
