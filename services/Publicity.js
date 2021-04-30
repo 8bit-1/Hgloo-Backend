@@ -26,7 +26,7 @@ async function getPublicity(){
             INNER JOIN producto ON producto.usuario=usuario.idUsuario
             INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto
             WHERE producto.idEstadoProducto<>2
-            OR usuario.idEstado<>2`);  
+            AND usuario.idEstado<>2`);  
        
     
     let imagenes=[];
