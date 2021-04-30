@@ -18,7 +18,12 @@ async function Publicity(idUser, idProduct){
 }
 
 async function getPublicity(){
-    const idProductos = await db.queryP(`SELECT idProductoPublicidad FROM publicidad`);
+    const idProductos = await db.queryP(`SELECT publicidad.idProductoPublicidad FROM usuario 
+    INNER JOIN producto ON producto.usuario=usuario.idUsuario
+    INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto
+    WHERE producto.idEstadoProducto<>2
+    AND usuario.idEstado<>2
+    ORDER BY publicidad.idProductoPublicidad`);
    
     let result = await  db.queryP(
             `SELECT producto.idProducto as idProducto, usuario.idUsuario as idUsuario,  CONCAT(usuario.nombreUsuario," ",usuario.apellidoUsuario) as nombre,
@@ -26,7 +31,9 @@ async function getPublicity(){
             INNER JOIN producto ON producto.usuario=usuario.idUsuario
             INNER JOIN publicidad ON publicidad.idProductoPublicidad=producto.idProducto
             WHERE producto.idEstadoProducto<>2
-            AND usuario.idEstado<>2`);  
+            AND usuario.idEstado<>2  
+            ORDER BY publicidad.idProductoPublicidad`);  
+
        
     
     let imagenes=[];
