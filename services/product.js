@@ -4,7 +4,7 @@ const exchangesRates = require('./triggers-actions').exchangesRates;
 async function getProduct(idUser){
     const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
     ciudad.nombreCiudad, pais.pais,condicion.condicion,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, img.urlImagenProducto as imgURL,
+    producto.costo, moneda.Moneda, img.urlImagenProducto as imgURL,
     CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
@@ -87,7 +87,7 @@ async function deleteProduct(idProduct,idUser){
 async function homeProduct(idProduct){
     let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
     CONCAT(ciudad.nombreCiudad,", ",departamento.Departamento ,", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price ,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
+    producto.costo, moneda.Moneda ,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -116,7 +116,7 @@ async function homeProduct(idProduct){
     const productNombre = await db.queryP(`SELECT Producto FROM producto where idProducto=?`,[idProduct]); 
     const productos = await db.queryP(`SELECT producto.idProducto AS id, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
+    producto.costo,  moneda.Moneda , CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -149,7 +149,7 @@ async function getAllProducts(){
     const result = await db.queryP(`WITH productos AS (
         SELECT ROW_NUMBER() OVER(ORDER BY producto.idProducto ASC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-        CONCAT(producto.costo, " ", moneda.Moneda) AS price,  img.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        producto.costo, moneda.Moneda,  img.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
         INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
         AND  producto.idDepartamentoProducto=ciudad.idDepartamento
         AND producto.idPaisProducto=ciudad.idPais 
@@ -158,9 +158,11 @@ async function getAllProducts(){
         INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
         INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
         INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img 
-        ON img.idProducto = pro.idProductoINNER JOIN usuario ON usuario.idUsuario=producto.usuario
+        ON img.idProducto = producto.idProducto 
+        INNER JOIN usuario 
+        ON usuario.idUsuario=producto.usuario
         WHERE  producto.idEstadoProducto<>2
-        AND imagenesurl.idProducto=producto.idProducto
+        AND img.idProducto=producto.idProducto
         AND usuario.idEstado<>2
         GROUP BY producto.idProducto
         ORDER BY maxAmount ASC
@@ -212,6 +214,7 @@ async function getAllProductsUserLogged( uid, coin ) {
 }
 
 async function getProductByQuery( query ) {
+    console.log( query );
     let where = await madeWhere( query );
     let orderBy = await madeOrderBy( query );
     let queryP = '';
@@ -416,7 +419,7 @@ async function getProductById( idProduct ) {
     const result = await db.queryP(`
     SELECT  producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        producto.costo, moneda.Moneda AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
         INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
         AND  producto.idDepartamentoProducto=ciudad.idDepartamento
         AND producto.idPaisProducto=ciudad.idPais 

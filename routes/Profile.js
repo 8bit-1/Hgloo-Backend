@@ -62,7 +62,7 @@ router.get('/pictureProfile/:idUser', async function(req, res, next){
     
 } );
 
-router.get('/getProductByCategory/:token/:category/:word/:page', async function(req, res, next){
+router.get('/getProductByCategory/:token/:category/:word', async function(req, res, next){
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
             const uid = decodedToken.uid;
@@ -70,8 +70,7 @@ router.get('/getProductByCategory/:token/:category/:word/:page', async function(
                 .getMyProductsByCategory( 
                     uid, 
                     req.params.category, 
-                    req.params.word,
-                    req.params.page );
+                    req.params.word );
             res.json( productos );
         });
         
@@ -94,11 +93,11 @@ router.get('/getProductByCategoryOut/:uid/:category/:word', async function(req, 
     }
 });
 
-router.get( '/getProductMpPages/:token/:page', async ( req, res ) => {
+router.get( '/getProductMpPages/:token', async ( req, res ) => {
     try {
         admin.auth().verifyIdToken( req.params.token ).then( async ( decodedToken ) => {
             const uid = decodedToken.uid;
-            const productos = await profilE.getProductsByPages( uid, req.params.page );
+            const productos = await profilE.getProductsMyPages( uid );
             res.send( productos );
             res.end();
         });
