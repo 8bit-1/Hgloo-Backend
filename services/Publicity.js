@@ -100,7 +100,8 @@ async function postEmail(){
             producto=[];
             producto= await  db.queryP(` SELECT producto.idProducto, producto.Producto,
             ciudad.nombreCiudad, 
-            MIN(imagenesurl.urlImagenProducto) AS imagen, CONVERT(producto.fechaPublicacion,char) as Fecha  FROM producto 
+            img.urlImagenProducto AS imagen,CONCAT(producto.costo, " " ,moneda.Moneda) AS price, 
+            usuario.Telefono as contacto, CONVERT(producto.fechaPublicacion,char) as Fecha  FROM producto 
             INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
             AND  producto.idDepartamentoProducto=ciudad.idDepartamento
             AND producto.idPaisProducto=ciudad.idPais 
@@ -108,11 +109,16 @@ async function postEmail(){
             INNER JOIN pais ON producto.idPaisProducto=pais.idPais
             INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
             INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-            INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+            INNER JOIN usuario ON usuario.idUsuario=producto.usuario
+            INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), 
+                                            urlImagenProducto, 
+                                            idProducto FROM imagenesurl GROUP BY idProducto)  as img 
+                                        ON img.idProducto = producto.idProducto
             WHERE  producto.idEstadoProducto<>2
             AND producto.fechaPublicacion>=(DATE_SUB(CONVERT_TZ( NOW(),'Europe/London','America/Tegucigalpa'),INTERVAL (SELECT dias FROM emailPublicidad )DAY))
-            AND imagenesurl.idProducto=producto.idProducto
+            AND img.idProducto=producto.idProducto
             AND producto.idCategoriaProducto=?
+            AND usuario.idEstado<>2
             GROUP BY producto.idProducto
             ORDER BY producto.fechaPublicacion DESC; `,
             [cat[j].idCategoria]);

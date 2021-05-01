@@ -214,7 +214,6 @@ async function getAllProductsUserLogged( uid, coin ) {
 }
 
 async function getProductByQuery( query ) {
-    console.log( query );
     let where = await madeWhere( query );
     let orderBy = await madeOrderBy( query );
     let queryP = '';
@@ -267,7 +266,7 @@ async function getProductByQuery( query ) {
         productsFiltered = await db.queryP( queryP );
         return { amount: productsFilteredLength, products: productsFiltered };
     } else { 
-        queryP = queryFilterProduct + `ORDER BY idProduct`;
+        queryP = queryFilterProduct;
         productsFilteredLength = await db.queryP( queryP );
         productsFilteredLength = productsFilteredLength.length;
         productsFiltered = await db.queryP( queryP );
