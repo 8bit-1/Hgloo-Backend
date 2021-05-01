@@ -101,7 +101,7 @@ async function postEmail(){
             producto= await  db.queryP(` SELECT producto.idProducto, producto.Producto,
             ciudad.nombreCiudad, 
             img.urlImagenProducto AS imagen,CONCAT(producto.costo, " " ,moneda.Moneda) AS price, 
-            usuario.Telefono as contacto, CONVERT(producto.fechaPublicacion,char) as Fecha  FROM producto 
+            usuario.Telefono as contacto, condicion.condicion as Estado, CONVERT(producto.fechaPublicacion,char) as Fecha  FROM producto 
             INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
             AND  producto.idDepartamentoProducto=ciudad.idDepartamento
             AND producto.idPaisProducto=ciudad.idPais 
