@@ -158,9 +158,11 @@ async function getAllProducts(){
         INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
         INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
         INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img 
-        ON img.idProducto = pro.idProductoINNER JOIN usuario ON usuario.idUsuario=producto.usuario
+        ON img.idProducto = producto.idProducto 
+        INNER JOIN usuario 
+        ON usuario.idUsuario=producto.usuario
         WHERE  producto.idEstadoProducto<>2
-        AND imagenesurl.idProducto=producto.idProducto
+        AND img.idProducto=producto.idProducto
         AND usuario.idEstado<>2
         GROUP BY producto.idProducto
         ORDER BY maxAmount ASC
@@ -212,6 +214,7 @@ async function getAllProductsUserLogged( uid, coin ) {
 }
 
 async function getProductByQuery( query ) {
+    console.log( query );
     let where = await madeWhere( query );
     let orderBy = await madeOrderBy( query );
     let queryP = '';
