@@ -185,15 +185,22 @@ async function getComplaintProducts(){
 
 
 async function productsByDate(){
+    let mes = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let años=[]
     años= await db.queryP(`SELECT DISTINCT(YEAR(fechaPublicacion)) as year FROM producto`)
-    let data=[];
-
+    let data;
+    let meses = [];
     for(var j=0;j<años.length;j++){
-        años[j]["data"]=await db.queryP(`SELECT MONTHNAME(fechaPublicacion)as month,COUNT(idProducto) as products FROM producto 
-        where YEAR(fechaPublicacion)=? GROUP BY MONTH(fechaPublicacion)`,[años[j].year])    
+        for( var i = 0; i < mes.length ; i++){
+            data = await db.queryP(`SELECT COUNT(idProducto) as products FROM producto 
+                                    where YEAR(fechaPublicacion)=? AND MONTH(fechaPublicacion) = ?`,[años[j].year, i+1]); 
+            data = data[0];
+            data["month"] = mes[i];
+            meses.push(data);
+        }
+        años[j]["data"] = meses;
+        meses = [];
     }
-
     return años;
 }   
 
