@@ -39,7 +39,7 @@ async function getProfile(idUser){
     WHERE redesUsuario.idUsuarioRed=?`,[idUser]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+    producto.costo, moneda.Moneda, CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -193,7 +193,7 @@ async function showProfile(idUser){
     WHERE redesUsuario.idUsuarioRed=?`,[idUser]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price  FROM producto 
+    producto.costo, moneda.Moneda  FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -270,7 +270,7 @@ async function viewProfile(idBuyer,idSeller){
     WHERE redesUsuario.idUsuarioRed=?`,[idSeller]);
     const result3 = await db.queryP(`SELECT producto.idProducto AS idProduct, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
+    producto.costo,  moneda.Moneda, CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -318,7 +318,7 @@ async function getMyProductsByCategory( uid, idCategoria, word ) {
 
     let query = `SELECT  producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        producto.costo,  moneda.Moneda, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
         INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
         AND  producto.idDepartamentoProducto=ciudad.idDepartamento
         AND producto.idPaisProducto=ciudad.idPais 
