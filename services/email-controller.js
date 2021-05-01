@@ -27,7 +27,6 @@ async function sendEmail( mailOptions ) {
 async function sendMail() {
     const publicidad = await publicity.postEmail();
 
-    console.log( publicidad );
     publicidad.forEach( async ( usuario ) => {
         if ( usuario.Categorias.length ) {
             var mailOptions = {

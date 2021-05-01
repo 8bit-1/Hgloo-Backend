@@ -87,7 +87,7 @@ async function deleteProduct(idProduct,idUser){
 async function homeProduct(idProduct){
     let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
     CONCAT(ciudad.nombreCiudad,", ",departamento.Departamento ,", ", pais.pais) AS location,  condicion.condicion AS state,
-    CONCAT(producto.costo, " " ,moneda.Moneda) AS price,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
+    CONCAT(producto.costo, " " ,moneda.Moneda) AS price,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS datep FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -218,7 +218,7 @@ async function getProductByQuery( query ) {
     let orderBy = await madeOrderBy( query );
     let queryP = '';
     let queryFilterProduct = `
-    SELECT DISTINCT pro.idProducto as idProduct, pro.Producto as productName, pro.fechaPublicacion as date, 
+    SELECT DISTINCT pro.idProducto as idProduct, pro.Producto as productName, pro.fechaPublicacion as datep, 
     pro.costo, " ", mon.Moneda, mon.idMoneda, cat.nombreCategoria,
     CONCAT( ciu.nombreCiudad, ", ", pais.Pais ) as location, con.condicion as state, 
     img.urlImagenProducto as imgURL ${ ( query.calificacion != '' ) ? ', usr.calificacion' : '' }  FROM producto as pro 
@@ -338,6 +338,7 @@ function madeWhere( query ) {
 
 function madeOrderBy( query ) {
     sqlSyntax = '';
+    console.log( query );
     const orderByArray = [
         {
           sql: ' pro.costo ' + query.orderByPrice,
@@ -346,7 +347,7 @@ function madeOrderBy( query ) {
         },
         {
           sql: ' pro.fechaPublicacion ' + query.orderByDate,
-          insert: ( query.orderByDate ) ? true : false,
+          insert: ( query.orderByDate != '' ) ? true : false,
           next: ' , ',
         },
       ];
@@ -361,7 +362,7 @@ function madeOrderBy( query ) {
     if ( sqlSyntax == ' ORDER BY ' ) {
         orderByArray.forEach( ( sql, index ) => {
             if ( sql.insert ) {
-                sqlSyntax += ( orderByArray[index + 1 ]?.insert != undefined ) ? sql.sql + sql.next : sql.sql;
+                sqlSyntax += ( orderByArray[index + 1 ]?.insert ) ? sql.sql + sql.next : sql.sql;
             }
         });
     }
@@ -371,7 +372,7 @@ function madeOrderBy( query ) {
 
 async function searchProduct( word ) {
     const result = await db.queryP( `SELECT pro.idProducto as idProduct, pro.Producto as productName, pro.usuario,
-                                        pro.fechaPublicacion as date, pro.costo, mon.Moneda, mon.idMoneda,
+                                        pro.fechaPublicacion as datep, pro.costo, mon.Moneda, mon.idMoneda,
                                         cat.nombreCategoria, CONCAT(ciu.nombreCiudad,", ",pais.pais) as location,
                                         con.condicion,  img.urlImagenProducto as imgURL
                                         FROM producto AS pro
