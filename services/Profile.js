@@ -310,11 +310,6 @@ async function viewPictureProfile(idUser){
 }
 
 async function getMyProductsByCategory( uid, idCategoria, word ) {
-    let maxAmountQuery = await db.queryP(`
-        SELECT COUNT( * ) as amount FROM producto WHERE producto.idEstadoProducto<>2
-        AND producto.usuario = '${ uid }'` + 
-        ( ( idCategoria != 'none' ) ? ' AND producto.idCategoriaProducto =' + idCategoria + ' ' : '') +
-        ( ( word != 'none' ) ? ' AND producto.Producto LIKE "%' + word + '%" ' : '' ));
 
     let query = `SELECT  producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
@@ -338,7 +333,7 @@ async function getMyProductsByCategory( uid, idCategoria, word ) {
     const result = await db.queryP( query );
 
     if (!result) { return [];}
-    return { maxAmountQuery: maxAmountQuery, products: result };
+    return { products: result };
 }
 
 async function getProductsMyPages( uid ) {

@@ -87,7 +87,7 @@ async function deleteProduct(idProduct,idUser){
 async function homeProduct(idProduct){
     let result = await db.queryP(`SELECT producto.idProducto AS id, producto.Producto AS productName, producto.descripcion,
     CONCAT(ciudad.nombreCiudad,", ",departamento.Departamento ,", ", pais.pais) AS location,  condicion.condicion AS state,
-    producto.costo, moneda.Moneda ,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
+    CONCAT(producto.costo, " " ,moneda.Moneda) AS price,categoria.nombreCategoria AS category,CONVERT(producto.fechaPublicacion,char) AS publicationDate FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
     AND producto.idPaisProducto=ciudad.idPais 
@@ -114,7 +114,7 @@ async function homeProduct(idProduct){
                                     where p.idProducto=? AND ru.urlRedSocial<>""`,[idProduct]);
 
     const productNombre = await db.queryP(`SELECT Producto FROM producto where idProducto=?`,[idProduct]); 
-    const productos = await db.queryP(`SELECT producto.idProducto AS id, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
+    const productos = await db.queryP(`SELECT producto.idProducto AS id, img.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
     producto.costo,  moneda.Moneda , CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -127,12 +127,12 @@ async function homeProduct(idProduct){
     INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), 
                                             urlImagenProducto, 
                                             idProducto FROM imagenesurl GROUP BY idProducto)  as img 
-                                        ON img.idProducto = pro.idProducto
+                                        ON img.idProducto = producto.idProducto
     WHERE  producto.idEstadoProducto<>2
     AND producto.idProducto<>?
     AND (MATCH(Producto) Against (?)
     OR producto.idCategoriaProducto=(SELECT idCategoriaProducto FROM producto where idProducto=?))
-    AND imagenesurl.idProducto=producto.idProducto
+    AND img.idProducto=producto.idProducto
     GROUP BY producto.idProducto
     ORDER BY producto.Producto, producto.fechaPublicacion DESC LIMIT 10`,[idProduct,productNombre[0].Producto,idProduct]);
     result=result[0];
