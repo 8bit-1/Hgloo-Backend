@@ -4,7 +4,7 @@ const exchangesRates = require('./triggers-actions').exchangesRates;
 async function getProduct(idUser){
     const result = await db.queryP(`SELECT producto.idProducto, producto.Producto,
     ciudad.nombreCiudad, pais.pais,condicion.condicion,
-    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, MIN(imagenesurl.idImagenesURL) AS idImagen, imagenesurl.urlImagenProducto as imagen,
+    CONCAT(producto.costo, " ", moneda.Moneda) AS costo, img.urlImagenProducto as imgURL,
     CONVERT( producto.fechaPublicacion,char) AS datep FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
     AND  producto.idDepartamentoProducto=ciudad.idDepartamento
@@ -13,7 +13,7 @@ async function getProduct(idUser){
     INNER JOIN pais ON producto.idPaisProducto=pais.idPais
     INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
     INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+    INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ),urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img ON img.idProducto = pro.idProducto
     WHERE  producto.idEstadoProducto<>2
     AND producto.usuario=?
     AND imagenesurl.idProducto=producto.idProducto
@@ -114,7 +114,7 @@ async function homeProduct(idProduct){
                                     where p.idProducto=? AND ru.urlRedSocial<>""`,[idProduct]);
 
     const productNombre = await db.queryP(`SELECT Producto FROM producto where idProducto=?`,[idProduct]); 
-    const productos = await db.queryP(`SELECT producto.idProducto AS id, MIN(imagenesurl.idImagenesURL) AS idImagen, imagenesurl.urlImagenProducto as imagen, producto.Producto AS productName,
+    const productos = await db.queryP(`SELECT producto.idProducto AS id, imagenesurl.urlImagenProducto as imgURL, producto.Producto AS productName,
     CONCAT(ciudad.nombreCiudad, ", ", pais.pais) AS location,  condicion.condicion AS state,
     CONCAT(producto.costo, " ", moneda.Moneda) AS price, CONVERT( producto.fechaPublicacion,char) AS fecha FROM producto 
     INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
@@ -124,7 +124,10 @@ async function homeProduct(idProduct){
     INNER JOIN pais ON producto.idPaisProducto=pais.idPais
     INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
     INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-    INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
+    INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), 
+                                            urlImagenProducto, 
+                                            idProducto FROM imagenesurl GROUP BY idProducto)  as img 
+                                        ON img.idProducto = pro.idProducto
     WHERE  producto.idEstadoProducto<>2
     AND producto.idProducto<>?
     AND (MATCH(Producto) Against (?)
@@ -146,7 +149,7 @@ async function getAllProducts(){
     const result = await db.queryP(`WITH productos AS (
         SELECT ROW_NUMBER() OVER(ORDER BY producto.idProducto ASC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-        CONCAT(producto.costo, " ", moneda.Moneda) AS price, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        CONCAT(producto.costo, " ", moneda.Moneda) AS price,  img.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
         INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
         AND  producto.idDepartamentoProducto=ciudad.idDepartamento
         AND producto.idPaisProducto=ciudad.idPais 
@@ -154,8 +157,8 @@ async function getAllProducts(){
         INNER JOIN pais ON producto.idPaisProducto=pais.idPais
         INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
         INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
-        INNER JOIN usuario ON usuario.idUsuario=producto.usuario
+        INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img 
+        ON img.idProducto = pro.idProductoINNER JOIN usuario ON usuario.idUsuario=producto.usuario
         WHERE  producto.idEstadoProducto<>2
         AND imagenesurl.idProducto=producto.idProducto
         AND usuario.idEstado<>2
@@ -172,7 +175,7 @@ async function getAllProductsUserLogged( uid, coin ) {
     const result = await db.queryP(`WITH productos AS (
         SELECT ROW_NUMBER() OVER(ORDER BY producto.fechaPublicacion DESC) AS maxAmount, producto.idProducto as idProduct, producto.usuario, producto.Producto as productName,
         CONCAT(ciudad.nombreCiudad,", ",pais.pais) as location,condicion.condicion as state,
-        producto.costo, moneda.Moneda, producto.idMoneda as idMoneda, MIN(imagenesurl.idImagenesURL) AS idImage, imagenesurl.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
+        producto.costo, moneda.Moneda, producto.idMoneda as idMoneda, img.urlImagenProducto as imgURL,CONVERT( producto.fechaPublicacion,char) AS datep  FROM producto 
         INNER JOIN ciudad ON producto.idCiudadProducto=ciudad.idCiudad 
         AND  producto.idDepartamentoProducto=ciudad.idDepartamento
         AND producto.idPaisProducto=ciudad.idPais 
@@ -180,10 +183,11 @@ async function getAllProductsUserLogged( uid, coin ) {
         INNER JOIN pais ON producto.idPaisProducto=pais.idPais
         INNER JOIN condicion ON producto.idCondicion=condicion.idCondicion
         INNER JOIN moneda ON producto.idMoneda=moneda.idMoneda
-        INNER JOIN imagenesurl ON imagenesurl.idProducto=producto.idProducto
         INNER JOIN usuario ON usuario.idUsuario=producto.usuario
+        INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img 
+        ON img.idProducto = producto.idProducto
         WHERE  producto.idEstadoProducto<>2
-        AND imagenesurl.idProducto=producto.idProducto
+        AND img.idProducto=producto.idProducto
         AND producto.usuario <> '${ uid }'
         AND usuario.idEstado<>2
         GROUP BY producto.idProducto
@@ -215,7 +219,7 @@ async function getProductByQuery( query ) {
     SELECT DISTINCT pro.idProducto as idProduct, pro.Producto as productName, pro.fechaPublicacion as date, 
     pro.costo, " ", mon.Moneda, mon.idMoneda, cat.nombreCategoria,
     CONCAT( ciu.nombreCiudad, ", ", pais.Pais ) as location, con.condicion as state, 
-    MIN( img.urlImagenProducto ) as imgURL ${ ( query.calificacion != '' ) ? ', usr.calificacion' : '' }  FROM producto as pro 
+    img.urlImagenProducto as imgURL ${ ( query.calificacion != '' ) ? ', usr.calificacion' : '' }  FROM producto as pro 
     INNER JOIN categoria as cat 
     ON cat.idCategoria = pro.idCategoriaProducto 
     INNER JOIN departamento as dep 
@@ -230,7 +234,7 @@ async function getProductByQuery( query ) {
     ON mon.idMoneda = pro.idMoneda 
     INNER JOIN condicion as con 
     ON con.idCondicion = pro.idCondicion 
-    INNER JOIN imagenesurl as img 
+    INNER JOIN (SELECT DISTINCT MIN( idImagenesURL ), urlImagenProducto, idProducto FROM imagenesurl GROUP BY idProducto)  as img 
     ON img.idProducto = pro.idProducto
     ${ ( query.calificacion != '' ) ? 'INNER JOIN ( SELECT calificacion.Calificado, CAST(AVG(calificacion)  AS DECIMAL(10,0)) AS calificacion FROM calificacion GROUP BY Calificado ) as usr ON usr.Calificado = pro.usuario' : '' } `;
 

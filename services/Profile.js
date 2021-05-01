@@ -131,8 +131,7 @@ async function mostProfile(idUser){
     AND producto.usuario=?
     AND imagenesurl.idProducto=producto.idProducto
     GROUP BY producto.idProducto
-    ORDER BY producto.fechaPublicacion DESC
-    LIMIT 0,20`,[idUser]);
+    ORDER BY producto.fechaPublicacion DESC`,[idUser]);
     const result5 = await db.queryP(`SELECT categoria.idCategoria  FROM usuario
     INNER JOIN categoriausuario
     on usuario.idUsuario=categoriausuario.idUsuario
@@ -284,7 +283,7 @@ async function viewProfile(idBuyer,idSeller){
     AND producto.usuario=?
     AND imagenesurl.idProducto=producto.idProducto
     GROUP BY producto.idProducto
-    ORDER BY producto.fechaPublicacion DESC LIMIT 20, 20`,[idSeller]);
+    ORDER BY producto.fechaPublicacion DESC`,[idSeller]);
     const result5 = await db.queryP(`SELECT categoria.idCategoria  FROM usuario
     INNER JOIN categoriausuario
     on usuario.idUsuario=categoriausuario.idUsuario
