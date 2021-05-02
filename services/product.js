@@ -167,7 +167,7 @@ async function getAllProducts(){
         GROUP BY producto.idProducto
         ORDER BY maxAmount ASC
         ) SELECT idProduct, usuario, productName, location , state,
-        price, imgURL, datep FROM  productos
+        costo, Moneda, imgURL, datep FROM  productos
         ORDER BY idProduct DESC`);
     if (!result) { return [];}
     return result;
