@@ -192,13 +192,13 @@ async function sendMail() {
                                                                         <h6 class="font ubication-product">${ producto.nombreCiudad }</h6>
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <h6 class="font ubication-product">Estado</h6>
+                                                                        <h6 class="font ubication-product">Estado: ${ producto.estado }</h6>
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <h6 class="font name-product">Precio</h6>
+                                                                        <h6 class="font name-product">Precio: ${ producto.imagen }</h6>
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <h6 class="font name-product">Contacto del vendedor</h6>
+                                                                        <h6 class="font name-product">Contacto del vendedor: ${ producto.contacto }</h6>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -224,7 +224,8 @@ async function sendMail() {
     });
 
     date = new Date();
-    return { Ok: 1, date: date }; 
+    // return { Ok: 1, date: date }; 
+    return publicidad; 
 }
 
 module.exports = {
