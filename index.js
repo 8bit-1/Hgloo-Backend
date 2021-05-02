@@ -28,6 +28,7 @@ const adminRouter = require('./routes/Administrator');
 const emailsRouter = require('./routes/email');
 const notificationsRouter = require('./routes/Notifications');
 const configHgloo = require('./services/triggers-actions');
+const config = require('./routes/config');
 const app = express();
 
 //Settings
@@ -61,6 +62,7 @@ app.use('/publicity', publicityRouter);
 app.use('/admin', adminRouter);
 app.use('/email', emailsRouter);
 app.use('/notifications', notificationsRouter);
+app.use('/config',config);
 //Starting Server
 
 app.listen(app.get('port'), () => {
