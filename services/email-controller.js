@@ -186,16 +186,17 @@ async function sendMail() {
                                                             <div class="info-product">
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        <h6 class="font name-product">${ producto.Producto }</h6>
+                                                                        <a class="font name-product" href="${'https://hgloo-app.web.app/pages/product/' + producto.idProducto}" class="font" target="_blank" 
+                                                                        style="text-decoration-line: none; font-size: 0.7rem !important; color: #0038fe;">Ver producto</a>
                                                                     </div>
                                                                     <div class="col-12">
                                                                         <h6 class="font ubication-product">${ producto.nombreCiudad }</h6>
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <h6 class="font ubication-product">Estado: ${ producto.estado }</h6>
+                                                                        <h6 class="font ubication-product">Estado: ${ producto.Estado }</h6>
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <h6 class="font name-product">Precio: ${ producto.imagen }</h6>
+                                                                        <h6 class="font name-product">Precio: ${ producto.price }</h6>
                                                                     </div>
                                                                     <div class="col-12">
                                                                         <h6 class="font name-product">Contacto del vendedor: ${ producto.contacto }</h6>
@@ -204,7 +205,7 @@ async function sendMail() {
                                                             </div>
                                                             <div class="row mb-0" style="display: inline-block;">
                                                                     <b>
-                                                                        <a href="https://akveo.page.link/8V2f" class="font" target="_blank" 
+                                                                        <a href="${'https://hgloo-app.web.app/pages/product/' + producto.idProducto}" class="font" target="_blank" 
                                                                         style="text-decoration-line: none; font-size: 0.7rem !important; color: #0038fe;">Ver producto</a>
                                                                     </b>
                                                             </div>
