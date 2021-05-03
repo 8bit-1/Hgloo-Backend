@@ -32,7 +32,7 @@ async function commentProduct(comment,commentator,idProduct){
     let message = 'Error creating commentary';
 
     if (result.affectedRows) {
-        message = 'commentary sucessfully';
+        message = await db.queryP(`SELECT (CONVERT_TZ( NOW(),"-00:00",'America/Tegucigalpa')) as fecha`)
     }
     return message;
 }
