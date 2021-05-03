@@ -8,9 +8,14 @@ class SendEmail{
         console.log("hello world!");
         emailSender.sendMail();
     },{
-        scheduled: false
+        scheduled: false,
+        timezone: "America/Tegucigalpa"
     });    // Aqui se guardara el cron.
 
+    // {
+    //     scheduled: true,
+    //     timezone: "America/Sao_Paulo"
+    //   }
     hora = '23';
     minuto = '00';
     diaSemana = '06';
@@ -49,7 +54,6 @@ class SendEmail{
             semanal: this.semanal,
             mensual: this.mensual
         };
-        
     }
 
     startJob(){
@@ -75,7 +79,11 @@ class SendEmail{
         var fecha;
         fecha = this.minuto + ' ' + this.hora + ' * * ' + this.diaSemana;
         this.envioCorreos = cron.schedule( fecha , ()=>{
+            console.log('Enviando Correos...');
             console.log(emailSender.sendMail());
+        },{
+            scheduled: true,
+            timezone: "America/Tegucigalpa"
         });
         return "sucesfull";
     }
@@ -98,12 +106,17 @@ class SendEmail{
             fecha = this.minuto + ' ' + this.hora + ' * * ' + this.diaSemana;
             this.envioCorreos = cron.schedule( fecha , ()=>{
                 if(this.actualizarNow){
-                    console.log(emailSender.sendMail());
+                    console.log('Enviando Correos...');
+                    // console.log(emailSender.sendMail());
                     this.actualizarNow = false();
                     this.updateJob();
                 }else{
-                    console.log(emailSender.sendMail());
+                    console.log('Enviando Correos...');
+                    onsole.log(emailSender.sendMail());
                 }
+            },{
+                scheduled: true,
+                timezone: "America/Tegucigalpa"
             });
         }else if(this.mensual){
             fecha = this.minuto + ' ' + this.hora + ' ' + this.diaMes + ' * * ';
@@ -125,6 +138,10 @@ class SendEmail{
                 }else{
                     console.log(emailSender.sendMail());
                 }
+            },
+            {
+                scheduled: true,
+                timezone: "America/Tegucigalpa"
             });
         }
     }
